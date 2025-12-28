@@ -9,7 +9,7 @@
     <style>
         :root { --primary-red: #ff0000; }
         #ban-screen { display: none; position: fixed; inset: 0; background: #000; color: red; z-index: 10000; justify-content: center; align-items: center; flex-direction: column; font-family: 'Consolas'; text-align: center; }
-        body { margin: 0; padding: 0; background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3dmN3Jka2l2bnZmajIwcm1qdTlpeW52ODF2aWRqZWkzNGl3d3IweSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/w0YROIlXXXl5k0yyvW/giphy.gif'); background-size: cover; background-attachment: fixed; color: #eee; font-family: 'Consolas', monospace; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+        body { margin: 0; padding: 0; background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3dmN3Jka2l2bnZmajIwcm1qdTlpeW52ODF2aWRqZWkzNGl3d3IweSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/w0YROIlXXXl5k0yyvW/giphy.gif'); background-size: cover; background-attachment: fixed; color: #eee; font-family: 'Consolas', monospace; display: flex; justify-content: center; min-height: 100vh; overflow: hidden; }
         .container { width: 95%; max-width: 900px; text-align: center; padding: 60px 0; }
         .card { background: rgba(5,5,5,0.9); border: 1px solid #111; border-left: 4px solid var(--primary-red); padding: 25px; margin-bottom: 30px; text-align: left; }
         .input-group { display: flex; gap: 15px; margin-top: 15px; }
@@ -38,11 +38,11 @@
         .ban-btn { color: red; cursor: pointer; font-size: 10px; border: 1px solid red; padding: 2px 5px; }
     </style>
 </head>
-<body onkeydown="checkKeys(event);">
+<body onkeydown="checkKeys(event);" oncontextmenu="return false;">
 
     <div id="ban-screen">
         <h1 style="font-size: 60px; letter-spacing: 5px;">INDEX Mİ ATCAN EZİK :D</h1>
-        <p style="font-size: 18px; color: #fff;">ZODIAC SİSTEMİNDEN KOVULDUN.</p>
+        <p style="font-size: 18px; color: #fff;">ZODIAC KORUMASINA TAKILDIN.</p>
         <p id="ban-reason" style="color: #555;"></p>
         <p style="margin-top: 50px; color: red; letter-spacing: 10px;">Z O D I A C</p>
     </div>
@@ -88,33 +88,37 @@
         const SB_URL = "https://drgrjsbfnjlrcezlbpkv.supabase.co/rest/v1";
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyZ3Jqc2JmbmpscmNlemxicGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MjQzNjcsImV4cCI6MjA4MjUwMDM2N30.DvA0k3Rund7l5oeqrrG-OuYYnDg75MemDGjKlyO_0Zo";
         let currentTab = 'muhurler';
+        let myIP = "";
 
-        // 📱 CİHAZ TESPİT FONKSİYONU
-        function getDevice() {
-            const ua = navigator.userAgent;
-            if (/android/i.test(ua)) return "Android";
-            if (/iPhone|iPad|iPod/i.test(ua)) return "iOS";
-            if (/Windows/i.test(ua)) return "PC (Win)";
-            if (/Mac/i.test(ua)) return "Mac";
-            return "Bilinmiyor";
+        // 🛡️ DEVTOOLS KONTROL VE BAN
+        function detectDevTools() {
+            const threshold = 160;
+            const widthCheck = window.outerWidth - window.innerWidth > threshold;
+            const heightCheck = window.outerHeight - window.innerHeight > threshold;
+            
+            if (widthCheck || heightCheck) {
+                forceBan("Kod hırsızlığı teşebbüsü (DevTools)");
+            }
         }
 
-        // 🔍 BAN KONTROL VE ZİYARETÇİ KAYDI
+        async function forceBan(reason) {
+            if(!myIP) return;
+            await fetch(`${SB_URL}/ban_listesi`, {
+                method: 'POST',
+                headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ip: myIP, sebep: reason })
+            });
+            window.location.reload(); // Sayfayı yenileyerek ban ekranına düşür
+        }
+
+        // Cihaz ve Ban Kontrolü
         async function initSystem() {
             try {
                 const ipRes = await fetch('https://api.ipify.org?format=json');
-                const { ip } = await ipRes.json();
-                const device = getDevice();
+                const data = await ipRes.json();
+                myIP = data.ip;
 
-                // 1. Ziyaretçiyi Kaydet
-                await fetch(`${SB_URL}/ziyaretciler`, {
-                    method: 'POST',
-                    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ip: ip, cihaz_bilgisi: device })
-                });
-
-                // 2. Banlı mı Kontrol Et
-                const banCheck = await fetch(`${SB_URL}/ban_listesi?ip=eq.${ip}`, {
+                const banCheck = await fetch(`${SB_URL}/ban_listesi?ip=eq.${myIP}`, {
                     headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
                 });
                 const bans = await banCheck.json();
@@ -122,33 +126,43 @@
                     document.getElementById('main-content').style.display = 'none';
                     document.getElementById('ban-screen').style.display = 'flex';
                     document.getElementById('ban-reason').innerText = "Sebep: " + bans[0].sebep;
+                    return;
                 }
+                
+                setInterval(detectDevTools, 1000); // Her saniye kontrol et
             } catch (e) {}
         }
 
+        // Sağ Tıklama ve Kısayol Engelleme
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0))) || (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) {
+                forceBan("Kısayol ile sızma teşebbüsü");
+                return false;
+            }
+        }
+
+        // Terminal ve Diğer Fonksiyonlar
         async function fetchData(table) {
             const res = await fetch(`${SB_URL}/${table}?select=*&order=id.desc`, {
                 headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
             });
             const data = await res.json();
-            const box = document.getElementById('logBox');
-            box.innerHTML = data.map(i => {
+            document.getElementById('logBox').innerHTML = data.map(i => {
                 let val = (table === 'muhurler' ? i.isim : i.ip);
-                let device = i.cihaz_bilgisi ? `[${i.cihaz_bilgisi}]` : "";
                 let btn = (table === 'ban_listesi' ? '' : `<span class="ban-btn" onclick="banUser('${val}')">BANLA</span>`);
-                return `<div class="ban-row"><span>> ${val} ${device}</span>${btn}</div>`;
+                return `<div class="ban-row"><span>> ${val}</span>${btn}</div>`;
             }).join('');
         }
 
         async function banUser(target) {
             const s = prompt(target + " Ban Sebebi:");
             if(!s) return;
-            const res = await fetch(`${SB_URL}/ban_listesi`, {
+            await fetch(`${SB_URL}/ban_listesi`, {
                 method: 'POST',
-                headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+                headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ip: target, sebep: s })
             });
-            if(res.ok) { alert("Sistemden Silindi."); fetchData(currentTab); }
+            fetchData(currentTab);
         }
 
         async function saveMuhur() {
@@ -160,7 +174,7 @@
                 body: JSON.stringify({ isim: n })
             });
             document.getElementById('nameIn').value = "";
-            if(currentTab === 'muhurler') fetchData('muhurler');
+            fetchData('muhurler');
         }
 
         function switchTab(t, b) {
@@ -171,10 +185,8 @@
         }
 
         function checkKeys(e) {
-            if(e.key === "L" || e.key === "1") {
-                this.k = (this.k || "") + e.key;
-                if(this.k.includes("L11")) { document.getElementById('admin-panel').style.display = 'flex'; fetchData(currentTab); this.k = ""; }
-            } else { this.k = ""; }
+            this.k = (this.k || "") + e.key.toUpperCase();
+            if(this.k.includes("L11")) { document.getElementById('admin-panel').style.display = 'flex'; fetchData(currentTab); this.k = ""; }
         }
 
         setInterval(() => {
