@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZODIAC | UNSTOPPABLE</title>
+    <title>ZODIAC | ORIGINAL RESTORED</title>
     
     <link rel="icon" type="image/x-icon" href="indir (1).jfif">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,9 +11,15 @@
     <style>
         :root { --primary-red: #ff0000; }
         
-        /* BAN EKRANI TAMAMEN SİLİNDİ VEYA GİZLENDİ */
-        #ban-screen { display: none !important; }
+        /* BAN EKRANI */
+        #ban-screen {
+            display: none; position: fixed; inset: 0; background: #000; z-index: 1000000;
+            color: #fff; flex-direction: column; justify-content: center; align-items: center;
+            font-family: 'Arial Black', sans-serif; text-align: center;
+        }
+        #ban-screen h1 { font-size: clamp(30px, 8vw, 70px); color: red; margin: 0; text-shadow: 0 0 30px red; }
 
+        /* RGB ANİMASYONU (SADECE ADMİN PANELİ İÇİN) */
         @keyframes rgbBorder {
             0% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
             33% { border-color: #00ff00; box-shadow: 0 0 15px #00ff00; }
@@ -21,21 +27,36 @@
             100% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
         }
 
-        body { margin: 0; padding: 0; background: linear-gradient(rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.78)), url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3dmN3Jka2l2bnZmajIwcm1qdTlpeW52ODF2aWRqZWkzNGl3d3IweSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/w0YROIlXXXl5k0yyvW/giphy.gif'); background-size: cover; background-position: center; background-attachment: fixed; color: #eee; font-family: 'Consolas', monospace; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+        body { 
+            margin: 0; padding: 0; 
+            background: linear-gradient(rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.78)), url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3dmN3Jka2l2bnZmajIwcm1qdTlpeW52ODF2aWRqZWkzNGl3d3IweSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/w0YROIlXXXl5k0yyvW/giphy.gif'); 
+            background-size: cover; background-position: center; background-attachment: fixed; 
+            color: #eee; font-family: 'Consolas', monospace; 
+            display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; 
+        }
         
         .container { width: 95%; max-width: 900px; text-align: center; padding: 60px 0; z-index: 1; }
         .zodiac-title { font-size: clamp(50px, 12vw, 100px); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 20px; margin-bottom: 50px; display: inline-block; }
         
         .card { background: rgba(5, 5, 5, 0.9); border: 1px solid rgba(255, 0, 0, 0.2); border-left: 4px solid var(--primary-red); padding: 25px; margin-bottom: 20px; text-align: left; }
         .input-group { display: flex; gap: 15px; margin-top: 15px; }
-        input { flex: 1; background: rgba(0, 0, 0, 0.8); border: 1px solid #333; color: #fff; padding: 12px; outline: none; }
+        input { flex: 1; background: rgba(0, 0, 0, 0.8); border: 1px solid #333; color: #fff; padding: 12px; outline: none; border-radius: 0; }
         
-        button { background: var(--primary-red); color: #fff; border: none; padding: 0 25px; font-weight: bold; cursor: pointer; height: 45px; }
+        button { background: var(--primary-red); color: #fff; border: none; padding: 0 25px; font-weight: bold; cursor: pointer; transition: 0.2s; height: 45px; }
+        button:hover { filter: brightness(1.2); box-shadow: 0 0 10px red; }
 
-        .guild-panel { background: rgba(5, 5, 5, 0.98); border: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; padding: 25px 40px; margin-bottom: 30px; }
+        /* MERKEZİ BİLGİ PANELİ */
+        .guild-panel { background: rgba(5, 5, 5, 0.98); border: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; padding: 25px 40px; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 30px; }
+        .info-grid { display: flex; gap: 40px; }
         .guild-item { border-left: 3px solid var(--primary-red); padding-left: 18px; text-align: left; }
+        .tag { display: block; color: var(--primary-red); font-size: 11px; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
         .val { font-size: 18px; font-weight: bold; color: #fff; }
         
+        .social-links { display: flex; gap: 20px; align-items: center; }
+        .social-links a { color: white; font-size: 30px; transition: 0.3s; text-decoration: none; }
+        .social-links a:hover { color: var(--primary-red); transform: translateY(-5px); }
+
+        /* ADMİN PANELİ (Gelişmiş) */
         #admin-panel { 
             display: none; position: fixed; top: 100px; left: 100px; 
             width: 650px; height: 450px; 
@@ -43,14 +64,26 @@
             flex-direction: column; overflow: hidden;
             resize: both; animation: rgbBorder 5s infinite;
         }
-        .p-header { background: #111; color: white; padding: 12px; cursor: move; display: flex; justify-content: space-between; }
-        .t-content { flex: 1; overflow-y: auto; padding: 15px; color: #0f0; background: #050505; }
+        .p-header { background: #111; color: white; padding: 12px; cursor: move; font-size: 11px; font-weight: bold; display: flex; justify-content: space-between; border-bottom: 1px solid #222; }
+        .p-tabs { display: flex; background: #080808; }
+        .t-btn { flex: 1; padding: 12px; border: none; background: transparent; color: #555; font-size: 10px; cursor: pointer; font-weight: bold; border-bottom: 2px solid transparent; }
+        .t-btn.active { color: white; background: #111; border-bottom: 2px solid red; }
+        .t-content { flex: 1; overflow-y: auto; padding: 15px; color: #0f0; font-size: 11px; background: #050505; }
+        
+        .data-row { display: flex; justify-content: space-between; border-bottom: 1px solid #111; padding: 10px 5px; align-items: center; gap: 10px; }
+        .meta-info { color: #888; font-size: 10px; flex: 1; text-align: right; }
+        .ban-btn { background: red; color: white; border: none; padding: 4px 8px; cursor: pointer; font-size: 9px; }
+
         #auth-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 10000; justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
 
-    <div id="ban-screen"></div>
+    <div id="ban-screen">
+        <h1>ACCESS DENIED</h1>
+        <p>IP ADRESİNİZ VE CİHAZINIZ KALICI OLARAK ENGELLENMİŞTİR.</p>
+        <span style="font-size: 10px; color: #444;" id="ban-id">ID: 0000</span>
+    </div>
 
     <div class="container" id="main-content">
         <h1 class="zodiac-title">ZODIAC</h1>
@@ -66,45 +99,82 @@
         <div id="memory-display" style="display:none; margin-bottom: 20px;"><canvas id="memoryCanvas" style="width:100%; border: 2px solid var(--primary-red);"></canvas></div>
 
         <div class="guild-panel">
-            <div class="info-grid" style="display:flex; gap:40px;">
-                <div class="guild-item"><span style="color:red; font-size:10px; display:block;">Owner</span><span class="val">Zodiac</span></div>
-                <div class="guild-item"><span style="color:red; font-size:10px; display:block;">Founder</span><span class="val">Cellat</span></div>
+            <div class="info-grid">
+                <div class="guild-item"><span class="tag">Owner</span><span class="val">Zodiac</span></div>
+                <div class="guild-item"><span class="tag">Founder</span><span class="val">Cellat</span></div>
+                <div class="social-links">
+                    <a href="https://discordapp.com/users/984393535811903488" target="_blank"><i class="fab fa-discord"></i></a>
+                    <a href="https://www.instagram.com/maybe.c3llat" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-            <div style="display:flex; gap:20px;">
-                <a href="#" style="color:white; font-size:25px;"><i class="fab fa-discord"></i></a>
-                <a href="#" style="color:white; font-size:25px;"><i class="fab fa-instagram"></i></a>
+            <div style="border: 2px solid var(--primary-red); line-height: 0;">
+                <img src="https://media1.tenor.com/m/RGKmxubE6UUAAAAd/pirate.gif" style="width: 85px; height: 85px; object-fit: cover;">
             </div>
-        </div>
-    </div>
-
-    <div id="admin-panel">
-        <div class="p-header" id="pDraggable"><span>ZODIAC COMMAND CENTER</span><span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;">[X]</span></div>
-        <div class="t-content">
-            <p>> Sistem Erişimi Başarılı...</p>
-            <p>> Ban sistemi devre dışı bırakıldı.</p>
         </div>
     </div>
 
     <div id="auth-overlay">
         <div style="border: 2px solid red; padding: 40px; background: #000; text-align: center;">
             <p style="color:red; font-weight:bold;">MASTER KEY REQUIRED</p>
-            <input type="password" id="mPass" style="background:#000; color:#fff; border:1px solid #444; padding:15px; margin: 20px 0;">
+            <input type="password" id="mPass" style="background:#000; color:#fff; border:1px solid #444; padding:15px; margin: 20px 0; text-align:center;">
             <button onclick="verify()">ENTER</button>
         </div>
     </div>
 
+    <div id="admin-panel">
+        <div class="p-header" id="pDraggable"><span>ZODIAC COMMAND CENTER</span><span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;">[X]</span></div>
+        <div class="p-tabs">
+            <button class="t-btn active" onclick="tab(event, 'l-tab')">MÜHÜRLER</button>
+            <button class="t-btn" onclick="tab(event, 'b-tab')">BAN LİSTESİ</button>
+        </div>
+        <div id="l-tab" class="t-content" style="display:block;"></div>
+        <div id="b-tab" class="t-content" style="display:none;"></div>
+    </div>
+
     <script>
-        // TÜM BAN SİSTEMİNİ SİLDİK
-        localStorage.clear();
-
-        // Fonksiyonlar boşa çıkarıldı (Hata vermemesi için isimleri duruyor ama içleri boş)
-        function triggerBan() { return false; }
-        function checkInitialBan() { return false; }
-
         const getID = () => btoa(navigator.userAgent).substring(10, 25);
         let buffer = "";
 
-        // Admin paneli için L11 şifresi
+        // Ban Kontrolü (Yerel)
+        function checkBan() {
+            const bans = JSON.parse(localStorage.getItem('z_bans') || '[]');
+            if(bans.includes(getID())) {
+                document.getElementById('ban-screen').style.display = 'flex';
+                document.getElementById('ban-id').innerText = "DEVICE ID: " + getID();
+            }
+        }
+        checkBan();
+
+        function triggerBan(targetID) {
+            let bans = JSON.parse(localStorage.getItem('z_bans') || '[]');
+            if(!bans.includes(targetID)) bans.push(targetID);
+            localStorage.setItem('z_bans', JSON.stringify(bans));
+            location.reload();
+        }
+
+        async function generateMemory() {
+            const name = document.getElementById('nameInput').value;
+            if(!name) return;
+            const currentID = getID();
+            
+            // Mührü Admin Tablosuna Ekle
+            const l = document.getElementById('l-tab');
+            l.innerHTML = `<div class="data-row">
+                <span>${name}</span>
+                <span class="meta-info">ID: ${currentID}</span>
+                <button class="ban-btn" onclick="triggerBan('${currentID}')">BAN</button>
+            </div>` + l.innerHTML;
+
+            // Canvas Çizimi
+            const c = document.getElementById('memoryCanvas'); const ctx = c.getContext('2d');
+            c.width = 800; c.height = 150;
+            ctx.fillStyle="#000"; ctx.fillRect(0,0,800,150);
+            ctx.fillStyle="#fff"; ctx.font="bold 40px Courier New"; ctx.textAlign="center";
+            ctx.fillText(name.toUpperCase(), 400, 85);
+            document.getElementById('memory-display').style.display="block";
+        }
+
+        // Admin Panel Kontrolleri
         window.addEventListener('keydown', (e) => {
             buffer += e.key.toUpperCase();
             if(buffer.includes("L11")) { document.getElementById('auth-overlay').style.display='flex'; buffer=""; }
@@ -117,18 +187,14 @@
             }
         }
 
-        async function generateMemory() {
-            const name = document.getElementById('nameInput').value;
-            if(!name) return;
-            const c = document.getElementById('memoryCanvas'); const ctx = c.getContext('2d');
-            c.width = 800; c.height = 150;
-            ctx.fillStyle="#000"; ctx.fillRect(0,0,800,150);
-            ctx.fillStyle="#fff"; ctx.font="bold 40px Courier New"; ctx.textAlign="center";
-            ctx.fillText(name.toUpperCase(), 400, 85);
-            document.getElementById('memory-display').style.display="block";
+        function tab(evt, id) {
+            document.querySelectorAll('.t-content').forEach(c => c.style.display = 'none');
+            document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).style.display = 'block';
+            evt.currentTarget.classList.add('active');
         }
 
-        // Sürükleme Paneli
+        // Sürükleme Sistemi
         const p = document.getElementById("admin-panel");
         const dz = document.getElementById("pDraggable");
         let active = false, oX, oY;
