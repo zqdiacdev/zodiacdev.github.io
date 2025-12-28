@@ -23,7 +23,7 @@
         .card { background: rgba(5, 5, 5, 0.9); border: 1px solid rgba(255, 0, 0, 0.2); border-left: 4px solid var(--primary-red); padding: 25px; margin-bottom: 20px; text-align: left; }
         .input-group { display: flex; gap: 15px; margin-top: 15px; }
         input { flex: 1; background: rgba(0, 0, 0, 0.8); border: 1px solid #333; color: #fff; padding: 12px; outline: none; }
-        button { background: var(--primary-red); color: #fff; border: none; padding: 0 25px; font-weight: bold; cursor: pointer; }
+        button { background: var(--primary-red); color: #fff; border: none; padding: 0 25px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         #music-widget { position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.9); border: 1px solid #333; border-right: 3px solid red; padding: 10px 15px; display: flex; align-items: center; gap: 10px; }
         .guild-panel { background: rgba(5, 5, 5, 0.98); border: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; padding: 25px 40px; margin-bottom: 30px; }
         #admin-panel { display: none; position: fixed; top: 100px; left: 100px; width: 900px; height: 550px; background: #000; border: 2px solid red; z-index: 9999; flex-direction: column; overflow: hidden; resize: both; animation: rgbBorder 5s infinite; }
@@ -31,18 +31,19 @@
         .t-content { flex: 1; overflow-y: auto; padding: 15px; color: #0f0; background: #050505; font-size: 11px; }
         .data-table { width: 100%; border-collapse: collapse; }
         .data-table td, .data-table th { padding: 10px; border-bottom: 1px solid #111; text-align: left; }
+        #auth-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 10000; justify-content: center; align-items: center; }
     </style>
 </head>
-<body onkeydown="checkKeys(event);" oncontextmenu="autoBanTrigger('Sağ Tık Denemesi'); return false;">
+<body onkeydown="keyCheck(event);">
 
     <div id="ban-screen">
         <h1>ACCESS DENIED</h1>
-        <p>SİSTEMDEN KALICI OLARAK MENEDİLDİNİZ.</p>
+        <p>GİZLİ SEKME SİZİ KURTARAMAZ.</p>
         <div id="ban-details" style="color:red; font-size:10px; margin-top:20px;"></div>
     </div>
 
     <div id="entry-overlay">
-        <div style="color:red; margin-bottom: 20px; font-size: 12px; letter-spacing: 2px;">ZODIAC SYSTEM v10.5 ARMORED INITIALIZING...</div>
+        <div style="color:red; margin-bottom: 20px; font-size: 12px; letter-spacing: 2px;">ZODIAC SYSTEM v10.7 ARMORED INITIALIZING...</div>
         <button class="entry-btn" onclick="startSystem()">SİSTEME GİRİŞ YAP</button>
     </div>
 
@@ -62,8 +63,8 @@
         <div class="guild-panel">
             <div style="text-align: left;">
                 <div style="border-left: 3px solid red; padding-left: 15px;">
-                    <span style="color:red; font-size:10px; font-weight:bold;">FOUNDER</span><br>
-                    <span style="font-size:20px; font-weight:bold; color:white;">Cellat</span>
+                    <span style="color:red; font-size:10px; font-weight:bold;">OWNER/FOUNDER</span><br>
+                    <span style="font-size:20px; font-weight:bold; color:white;">Cellat & Zodiac</span>
                 </div>
                 <div style="margin-top:20px; display:flex; gap:20px;">
                     <a href="https://discordapp.com/users/984393535811903488" target="_blank" style="color:white; font-size:25px;"><i class="fab fa-discord"></i></a>
@@ -75,19 +76,19 @@
 
         <footer>
             <div id="serverTime" style="color: red; font-weight: bold;">Yükleniyor...</div>
-            <div style="font-size:10px; color:#444; margin-top:5px;">© 2026 ZODIAC. v10.5-ARMORED</div>
+            <div style="font-size:10px; color:#444; margin-top:5px;">© 2026 ZODIAC. v10.7-GHOST PROTOCOL</div>
         </footer>
     </div>
 
     <div id="music-widget" style="display:none;">
-        <span style="color:red; font-size:9px;">AUDIO ON</span>
+        <span style="color:red; font-size:9px;">ZODIAC AUDIO</span>
         <button onclick="toggleMusic()" id="mToggle" style="background:transparent; border:1px solid red; color:white; font-size:10px; padding:5px 10px;">DURAKLAT</button>
     </div>
 
-    <div id="auth-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.98); z-index:10000; display:flex; justify-content:center; align-items:center;">
+    <div id="auth-overlay">
         <div style="border: 2px solid red; padding: 40px; background: #000; text-align: center;">
             <p style="color:red; font-weight:bold;">MASTER KEY REQUIRED</p>
-            <input type="password" id="mPass" style="background:#000; color:#fff; border:1px solid #444; padding:15px; text-align:center; outline:none;">
+            <input type="password" id="mPass" style="background:#000; color:#fff; border:1px solid #444; padding:15px; text-align:center; outline:none; width:200px; margin:20px 0;">
             <button onclick="verify()">ENTER</button>
         </div>
     </div>
@@ -96,7 +97,7 @@
         <div class="p-header" id="pDraggable"><span>ZODIAC COMMAND CENTER</span><span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;">[X]</span></div>
         <div style="display:flex; background:#080808;">
             <button onclick="tab('l-tab')" style="flex:1; padding:10px; background:transparent; color:white; border:none; cursor:pointer; font-size:10px;">MÜHÜRLER</button>
-            <button onclick="tab('b-tab')" style="flex:1; padding:10px; background:transparent; color:white; border:none; cursor:pointer; font-size:10px;">BANLAR</button>
+            <button onclick="tab('b-tab')" style="flex:1; padding:10px; background:transparent; color:white; border:none; cursor:pointer; font-size:10px;">BAN LİSTESİ</button>
         </div>
         <div id="l-tab" class="t-content" style="display:block;"><table class="data-table"><thead><tr><th>Tarih</th><th>İsim</th><th>IP</th><th>İşlem</th></tr></thead><tbody id="log-body"></tbody></table></div>
         <div id="b-tab" class="t-content" style="display:none;"></div>
@@ -107,74 +108,78 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyZ3Jqc2JmbmpscmNlemxicGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MjQzNjcsImV4cCI6MjA4MjUwMDM2N30.DvA0k3Rund7l5oeqrrG-OuYYnDg75MemDGjKlyO_0Zo';
         const _s = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const audio = document.getElementById('bgMusic');
-        let playing = false;
+        let userIP = "0.0.0.0";
         let isAdmin = false;
         let buffer = "";
 
         const getID = () => btoa(navigator.userAgent).substring(10, 25);
-        const getIP = async () => { try { const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json(); return d.ip; } catch(e) { return "0.0.0.0"; } };
+        const fetchIP = async () => { try { const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json(); userIP = d.ip; } catch(e){} };
 
         // --- BAN TETİKLEYİCİ ---
-        async function autoBanTrigger(reason) {
-            const ip = await getIP();
+        async function autoBan(reason) {
+            if(isAdmin) return;
             const id = getID();
-            await _s.from('bans').insert([{ ip, device_id: id, reason: reason }]);
+            await _s.from('bans').insert([{ ip: userIP, device_id: id, reason: reason }]);
             location.reload();
         }
 
         // --- GÜVENLİK KONTROLÜ ---
         async function checkSecurity() {
-            const ip = await getIP();
+            await fetchIP();
             const id = getID();
-            const { data } = await _s.from('bans').select('*').or(`ip.eq.${ip},device_id.eq.${id}`);
+            const { data } = await _s.from('bans').select('*').or(`ip.eq.${userIP},device_id.eq.${id}`);
             if (data && data.length > 0) {
-                document.getElementById('main-content').innerHTML = "";
+                document.getElementById('main-content').style.display = "none";
                 document.getElementById('entry-overlay').style.display = "none";
                 document.getElementById('ban-screen').style.display = 'flex';
-                document.getElementById('ban-details').innerText = `IP: ${ip} | ID: ${id}`;
-                throw new Error("Banned User Access Denied");
+                document.getElementById('ban-details').innerText = `ID: ${id} | IP: ${userIP} | REASON: ${data[0].reason || 'Security Policy'}`;
+                return false;
             }
+            return true;
         }
 
         async function startSystem() {
-            try {
-                await checkSecurity(); // Önce ban kontrolü
+            const safe = await checkSecurity();
+            if(safe) {
                 document.getElementById('entry-overlay').style.display = "none";
                 document.getElementById('music-widget').style.display = "flex";
-                audio.play(); playing = true;
-                // Ziyaretçi kaydı
-                const ip = await getIP();
-                await _s.from('ziyaretciler').insert([{ ip, device_id: getID(), device_info: navigator.platform }]);
-            } catch(e) { console.log(e); }
-        }
-
-        function toggleMusic() { 
-            if(playing) { audio.pause(); document.getElementById('mToggle').innerText="OYNAT"; }
-            else { audio.play(); document.getElementById('mToggle').innerText="DURAKLAT"; }
-            playing = !playing;
-        }
-
-        function checkKeys(e) {
-            // F12 ve Inspect Koruması
-            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 85)) {
-                autoBanTrigger("Geliştirici Araçları Erişimi");
-                return false;
+                document.getElementById('bgMusic').play();
+                _s.from('ziyaretciler').insert([{ ip: userIP, device_id: getID(), device_info: navigator.platform }]);
             }
-            // Admin Panel L11
+        }
+
+        // --- KONSOL KORUMASI (GİZLİ SEKME İÇİN) ---
+        setInterval(() => {
+            if(isAdmin) return;
+            const start = performance.now();
+            debugger; 
+            if (performance.now() - start > 100) autoBan("Console Detected");
+        }, 1000);
+
+        function keyCheck(e) {
+            if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || e.key === 'F12') {
+                e.preventDefault();
+                autoBan("Key Restriction Violation");
+            }
             if (e.target.tagName !== 'INPUT') {
                 buffer += e.key.toUpperCase();
-                if (buffer.length > 3) buffer = buffer.substring(buffer.length - 3);
-                if(buffer.endsWith("L11")) { document.getElementById('auth-overlay').style.display='flex'; document.getElementById('mPass').focus(); buffer = ""; }
+                if(buffer.endsWith("L11")) { document.getElementById('auth-overlay').style.display='flex'; buffer=""; }
             }
+        }
+
+        window.addEventListener('contextmenu', e => { e.preventDefault(); autoBan("Right Click Violation"); });
+
+        // --- DİĞER FONKSİYONLAR ---
+        function toggleMusic() { 
+            const m = document.getElementById('bgMusic');
+            if(m.paused) { m.play(); document.getElementById('mToggle').innerText="DURAKLAT"; }
+            else { m.pause(); document.getElementById('mToggle').innerText="OYNAT"; }
         }
 
         async function generateMemory() {
             const name = document.getElementById('nameInput').value;
             if(!name) return;
-            const ip = await getIP();
-            await _s.from('muhurler').insert([{ name, ip, device_id: getID(), device_info: navigator.platform }]);
-            
+            await _s.from('muhurler').insert([{ name, ip: userIP, device_id: getID(), device_info: navigator.platform }]);
             const c = document.getElementById('memoryCanvas');
             const ctx = c.getContext('2d');
             c.width = 800; c.height = 150;
@@ -198,12 +203,12 @@
 
         async function renderLogs() {
             const { data } = await _s.from('muhurler').select('*').order('created_at', {ascending: false});
-            document.getElementById('log-body').innerHTML = data.map(m => `<tr><td>${new Date(m.created_at).toLocaleTimeString()}</td><td style="color:white;">${m.name}</td><td>${m.ip}</td><td><button onclick="autoBanTrigger('Admin Manuel Ban')" style="background:red; color:white; border:none; padding:3px 8px; font-size:9px;">BAN</button></td></tr>`).join('');
+            document.getElementById('log-body').innerHTML = data.map(m => `<tr><td>${new Date(m.created_at).toLocaleTimeString()}</td><td style="color:white;">${m.name}</td><td>${m.ip}</td><td><button onclick="autoBan('Admin Manual')" style="background:red; color:white; border:none; padding:3px 8px; font-size:9px;">BAN</button></td></tr>`).join('');
         }
 
         async function renderBans() {
             const { data } = await _s.from('bans').select('*');
-            document.getElementById('b-tab').innerHTML = data.map(b => `<div style="padding:10px; border-bottom:1px solid #222; display:flex; justify-content:space-between;"><span>${b.ip} <small>${b.reason || ''}</small></span><button onclick="unban('${b.id}')" style="background:#444; color:white; border:none; padding:3px; font-size:9px;">KALDIR</button></div>`).join('');
+            document.getElementById('b-tab').innerHTML = data.map(b => `<div style="padding:10px; border-bottom:1px solid #222; display:flex; justify-content:space-between;"><span>${b.ip} <small>(${b.reason})</small></span><button onclick="unban('${b.id}')" style="background:#444; color:white; border:none; padding:3px; font-size:9px;">KALDIR</button></div>`).join('');
         }
         async function unban(id) { await _s.from('bans').delete().eq('id', id); renderBans(); }
 
@@ -215,7 +220,6 @@
 
         setInterval(() => { document.getElementById('serverTime').innerText = `ZODIAC-TIME: ${new Date().toLocaleString('tr-TR')}`; }, 1000);
 
-        // Draggable
         const p = document.getElementById("admin-panel");
         const dz = document.getElementById("pDraggable");
         let active = false, oX, oY;
