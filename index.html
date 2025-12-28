@@ -4,45 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZODIAC & CELLAT | 2026 HATIRA</title>
+    <link rel="icon" type="image/x-icon" href="indir (1).jfif">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --primary-red: #ff0000; }
-        body { margin: 0; padding: 0; background: linear-gradient(rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.78)), url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3dmN3Jka2l2bnZmajIwcm1qdTlpeW52ODF2aWRqZWkzNGl3d3IweSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/w0YROIlXXXl5k0yyvW/giphy.gif'); background-size: cover; background-position: center; background-attachment: fixed; color: #eee; font-family: 'Consolas', monospace; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+        body { margin: 0; padding: 0; background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3dmN3Jka2l2bnZmajIwcm1qdTlpeW52ODF2aWRqZWkzNGl3d3IweSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/w0YROIlXXXl5k0yyvW/giphy.gif'); background-size: cover; background-attachment: fixed; color: #eee; font-family: 'Consolas', monospace; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; overflow-x: hidden; }
+        
         .container { width: 95%; max-width: 900px; text-align: center; padding: 60px 0; z-index: 1; }
-        .zodiac-title { font-size: clamp(50px, 12vw, 100px); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 20px; margin-bottom: 50px; animation: glitch-skew 0.6s infinite linear alternate-reverse; display: inline-block; }
-        @keyframes glitch-skew { 0% { transform: skew(3deg); } 100% { transform: skew(-3deg); } }
-        
-        .card { background: rgba(5, 5, 5, 0.9); border: 1px solid rgba(255, 0, 0, 0.2); border-left: 4px solid var(--primary-red); padding: 25px; margin-bottom: 30px; backdrop-filter: blur(10px); text-align: left; }
+        .zodiac-title { font-size: clamp(50px, 12vw, 100px); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 20px; margin-bottom: 50px; display: inline-block; }
+
+        /* Mühür Kartı */
+        .card { background: rgba(5, 5, 5, 0.95); border: 1px solid rgba(255, 0, 0, 0.2); border-left: 4px solid var(--primary-red); padding: 25px; margin-bottom: 30px; text-align: left; position: relative; }
         .input-group { display: flex; gap: 15px; margin-top: 15px; }
-        input { flex: 1; background: rgba(0, 0, 0, 0.8); border: 1px solid #333; color: #fff; padding: 12px; outline: none; font-family: 'Consolas'; }
+        input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 12px; outline: none; font-family: 'Consolas'; }
         button { background: var(--primary-red); color: #fff; border: none; padding: 0 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        
+        /* Göz İkonu (Karta Eklenen) */
+        .eye-icon { position: absolute; top: 15px; right: 15px; color: rgba(255,0,0,0.5); font-size: 18px; }
 
-        .guild-panel { background: rgba(5, 5, 5, 0.95); border: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; padding: 25px 40px; border-radius: 4px; margin-top: 20px; }
-        .info-grid { display: flex; gap: 40px; flex-wrap: wrap; }
-        .guild-item { border-left: 3px solid var(--primary-red); padding-left: 18px; text-align: left; }
-        .tag { display: block; color: var(--primary-red); font-size: 11px; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; letter-spacing: 1px; }
-        .val { font-size: 16px; font-weight: bold; color: #fff; }
+        /* PANEL - GÖRSELDEKİ TAM TASARIM */
+        .guild-panel { background: #050505; border: 1px solid #111; display: flex; justify-content: space-between; align-items: center; padding: 30px 45px; border-radius: 4px; margin-top: 20px; }
+        .info-grid { display: flex; gap: 40px; }
+        .guild-item { border-left: 2px solid var(--primary-red); padding-left: 20px; text-align: left; }
+        .tag { display: block; color: var(--primary-red); font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; }
+        .val { font-size: 18px; font-weight: bold; color: #fff; }
         
-        .social-links { display: flex; gap: 20px; align-items: center; }
-        .social-links a { color: white; font-size: 30px; transition: 0.3s; text-decoration: none; }
-        .social-links a:hover { color: var(--primary-red); transform: translateY(-5px); filter: drop-shadow(0 0 10px red); }
+        .social-links { display: flex; gap: 25px; }
+        .social-links a { color: white; font-size: 28px; text-decoration: none; transition: 0.3s; }
+        .social-links a:hover { color: var(--primary-red); filter: drop-shadow(0 0 8px red); }
         
-        .avatar-frame { border: 2px solid var(--primary-red); padding: 2px; line-height: 0; }
-        .avatar-frame img { width: 85px; height: 85px; object-fit: cover; }
-        
-        footer { margin-top: 50px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; font-size: 13px; color: #888; padding-bottom: 40px; }
-        .version-tag { color: #555; font-size: 10px; margin-top: 8px; letter-spacing: 2px; }
+        .avatar-frame { border: 1px solid var(--primary-red); padding: 1px; line-height: 0; }
+        .avatar-frame img { width: 80px; height: 80px; object-fit: cover; }
 
-        /* ADMIN PANEL */
-        #admin-panel { display: none; position: fixed; top: 20px; right: 20px; width: 400px; height: 500px; background: #000; border: 2px solid red; z-index: 9999; overflow: hidden; box-shadow: 0 0 40px #000; flex-direction: column; }
-        .p-header { background: red; color: white; padding: 10px; cursor: move; font-size: 11px; font-weight: bold; display: flex; justify-content: space-between; }
+        /* FOOTER */
+        footer { margin-top: 40px; font-size: 12px; color: #777; line-height: 1.8; }
+        .time-display { color: #ff0000; font-weight: bold; margin-bottom: 5px; font-size: 14px; letter-spacing: 1px; }
+
+        /* SQL ADMIN PANEL */
+        #admin-panel { display: none; position: fixed; top: 20px; right: 20px; width: 400px; height: 500px; background: #000; border: 2px solid red; z-index: 9999; flex-direction: column; box-shadow: 0 0 30px #000; }
+        .p-header { background: red; color: white; padding: 10px; cursor: move; font-weight: bold; display: flex; justify-content: space-between; font-size: 11px; }
         .p-tabs { display: flex; background: #111; }
-        .t-btn { flex: 1; padding: 12px; border: none; background: transparent; color: #555; font-size: 10px; cursor: pointer; font-weight: bold; }
-        .t-btn.active { color: red; background: #080808; border-bottom: 2px solid red; }
+        .t-btn { flex: 1; padding: 12px; border: none; background: transparent; color: #555; font-size: 10px; cursor: pointer; }
+        .t-btn.active { color: red; background: #000; border-bottom: 2px solid red; }
         .t-content { flex: 1; overflow-y: auto; padding: 15px; color: #0f0; font-size: 11px; background: #050505; display: none; }
         .t-content.active { display: block; }
-        .log-entry { border-bottom: 1px solid #111; padding: 8px 0; }
-        #auth-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 10000; justify-content: center; align-items: center; }
+        #auth-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.99); z-index: 10000; justify-content: center; align-items: center; }
     </style>
 </head>
 <body oncontextmenu="handleBan(); return false;" onkeydown="checkKeys(event);">
@@ -51,10 +57,10 @@
         <h1 class="zodiac-title">ZODIAC</h1>
 
         <div class="card">
-            <div style="color: var(--primary-red); font-size: 11px; font-weight: bold;">[SİSTEM AKTİF] - ADINI HATIRA BIRAK</div>
+            <i class="fa-solid fa-eye eye-icon"></i> <div style="color:red; font-size:11px; font-weight:bold;">[SİSTEM AKTİF] - ADINI HATIRA BIRAK</div>
             <div class="input-group">
-                <input type="text" id="nameInput" placeholder="Kullanıcı adını mühürle...">
-                <button onclick="saveMemory()">KAYDET</button>
+                <input type="text" id="nameIn" placeholder="Kullanıcı adını mühürle...">
+                <button onclick="saveToSQL()">KAYDET</button>
             </div>
         </div>
 
@@ -62,14 +68,13 @@
 
         <div class="guild-panel">
             <div class="info-grid">
-                <div class="guild-item"><span class="tag">SAAT</span><span class="val" id="serverTime">00:00:00</span></div>
-                <div class="guild-item"><span class="tag">KONUM</span><span class="val">İSTANBUL / TÜRKİYE</span></div>
-                <div class="guild-item"><span class="tag">SİTE SÜRÜMÜ</span><span class="val">v2.0</span></div>
+                <div class="guild-item"><span class="tag">OWNER</span><span class="val">Zodiac</span></div>
+                <div class="guild-item"><span class="tag">FOUNDER</span><span class="val">Cellat</span></div>
             </div>
             
             <div class="social-links">
-                <a href="https://discordapp.com/users/984393535811903488" target="_blank"><i class="fab fa-discord"></i></a>
-                <a href="https://www.instagram.com/maybe.c3llat" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://discordapp.com/users/984393535811903488" target="_blank"><i class="fa-brands fa-discord"></i></a>
+                <a href="https://www.instagram.com/maybe.c3llat" target="_blank"><i class="fa-brands fa-instagram"></i></a>
             </div>
 
             <div class="avatar-frame">
@@ -78,16 +83,16 @@
         </div>
 
         <footer>
-            <div style="color: red; font-weight: bold; margin-bottom: 5px;">2026 - TÜM HAKLARI SAKLIDIR.</div>
-            <div>ZODIAC & CELLAT PROJECT</div>
-            <div class="version-tag">ZODIAC v6.5.0-MONITOR</div>
+            <div class="time-display" id="clock">TR/İST: 28.12.2026 00:00:00</div>
+            <div>© 2026 ZODIAC. Tüm hakları saklıdır.</div>
+            <div style="color:#444; font-size:10px; margin-top:5px;">ZODIAC v6.5.0-MONITOR | İSTANBUL</div>
         </footer>
     </div>
 
     <div id="admin-panel">
-        <div class="p-header" id="pDraggable"><span>ZODIAC SQL COMMAND</span><span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;">[X]</span></div>
+        <div class="p-header" id="pDrag"><span>SQL CONTROL CENTER</span><span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;">[X]</span></div>
         <div class="p-tabs">
-            <button class="t-btn active" onclick="tab(event, 'l-tab')">MÜHÜRLER</button>
+            <button class="t-btn active" onclick="tab(event, 'l-tab')">LOGLAR</button>
             <button class="t-btn" onclick="tab(event, 'd-tab')">CİHAZLAR</button>
             <button class="t-btn" onclick="tab(event, 'b-tab')">BANLAR</button>
         </div>
@@ -97,10 +102,10 @@
     </div>
 
     <div id="auth-overlay">
-        <div style="border: 2px solid red; padding: 40px; background: #000; text-align: center;">
-            <p style="color:red; font-weight:bold;">MASTER KEY</p>
-            <input type="password" id="mPass" style="background:#000; color:#fff; border:1px solid #444; padding:15px; text-align:center; width:220px; outline:none; margin: 20px 0;">
-            <button onclick="verify()" style="background:red; color:#fff; border:none; padding:12px; cursor:pointer; width:100%;">ENTER</button>
+        <div style="border:2px solid red; padding:40px; background:#000; text-align:center;">
+            <p style="color:red; letter-spacing: 2px;">SQL AUTH REQUIRED</p>
+            <input type="password" id="pIn" style="background:#000; color:#fff; border:1px solid #333; padding:15px; text-align:center;"><br><br>
+            <button onclick="login()" style="width:100%; padding:10px; background:red; color:white; border:none;">GİRİŞ</button>
         </div>
     </div>
 
@@ -108,13 +113,15 @@
         const SB_URL = "https://drgrjsbfnjlrcezlbpkv.supabase.co";
         const SB_KEY = "sb_secret_LjDhHJoY_ZIbRzh0L0IDCQ_ClMfFNoN"; 
 
-        // SQL İŞLEMLERİ
+        // Saat (TR/İST Formatı)
+        setInterval(() => {
+            const d = new Date();
+            document.getElementById('clock').innerText = `TR/İST: ${d.toLocaleDateString('tr-TR').replace(/\d{4}$/,'2026')} ${d.toLocaleTimeString('tr-TR')}`;
+        }, 1000);
+
         const Z_SQL = {
             async query(table, method = 'GET', body = null) {
-                const options = {
-                    method,
-                    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }
-                };
+                const options = { method, headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' } };
                 if (body) options.body = JSON.stringify(body);
                 const res = await fetch(`${SB_URL}/rest/v1/${table}${method==='GET'?'?order=id.desc':''}`, options);
                 return await res.json();
@@ -122,61 +129,56 @@
             async refresh() {
                 if(localStorage.getItem('is_admin') === 'true') {
                     const [m, z, b] = await Promise.all([this.query('muhurler'), this.query('ziyaretciler'), this.query('ban_listesi')]);
-                    document.getElementById('l-tab').innerHTML = m.map(i => `<div class="log-entry">${i.isim} <br><small>${i.tarih}</small></div>`).join('');
-                    document.getElementById('d-tab').innerHTML = z.map(i => `<div class="log-entry">IP: ${i.ip}<br><small>${i.cihaz_bilgisi}</small></div>`).join('');
-                    document.getElementById('b-tab').innerHTML = b.map(i => `<div class="log-entry">BAN: ${i.ip}</div>`).join('');
+                    document.getElementById('l-tab').innerHTML = m.map(i => `<div>[SQL] ${i.isim} <br><small>${i.tarih}</small></div>`).join('');
+                    document.getElementById('d-tab').innerHTML = z.map(i => `<div>${i.ip} - ${i.cihaz_bilgisi}</div>`).join('');
+                    document.getElementById('b-tab').innerHTML = b.map(i => `<div>BANNED: ${i.ip}</div>`).join('');
                 }
             }
         };
 
-        // SAAT
-        setInterval(() => { document.getElementById('serverTime').innerText = new Date().toLocaleTimeString('tr-TR'); }, 1000);
-
-        // KAYDET & MÜHÜRLE
-        async function saveMemory() {
-            const n = document.getElementById('nameInput').value; if(!n) return;
+        async function saveToSQL() {
+            const n = document.getElementById('nameIn').value;
+            if(!n) return;
             await Z_SQL.query('muhurler', 'POST', { isim: n });
             
+            // Canvas Çizimi
             const c = document.getElementById('memoryCanvas'); const ctx = c.getContext('2d');
             c.width = 800; c.height = 200;
             ctx.fillStyle="#000"; ctx.fillRect(0,0,800,200);
-            ctx.fillStyle="#ff0000"; ctx.font="bold 40px Courier New"; ctx.textAlign="center"; ctx.fillText(n.toUpperCase(), 400, 110);
+            ctx.fillStyle="#ff0000"; ctx.font="bold 40px Courier New"; ctx.textAlign="center"; 
+            ctx.fillText(n.toUpperCase(), 400, 110);
             document.getElementById('memory-display').style.display="block";
             Z_SQL.refresh();
         }
 
-        // GÜVENLİK
-        function checkKeys(e) {
-            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && e.keyCode === 73)) { handleBan(); e.preventDefault(); }
-            if(e.key.toUpperCase() === 'L') { buffer = "L"; } else if(buffer === "L" && e.key === "1") { buffer = "L1"; } else if(buffer === "L1" && e.key === "1") {
-                document.getElementById('auth-overlay').style.display='flex'; buffer="";
-            }
-        }
         let buffer = "";
+        function checkKeys(e) {
+            if (e.keyCode === 123) handleBan();
+            buffer += e.key.toUpperCase();
+            if(buffer.includes("L11")) { document.getElementById('auth-overlay').style.display='flex'; buffer=""; }
+        }
 
         async function handleBan() {
             if(localStorage.getItem('is_admin') !== 'true') {
                 const r = await fetch('https://api.ipify.org?format=json');
                 const d = await r.json();
-                await Z_SQL.query('ban_listesi', 'POST', { ip: d.ip, sebep: "F12/Ihlal" });
+                await Z_SQL.query('ban_listesi', 'POST', { ip: d.ip, sebep: "Ihlal" });
                 location.reload();
             }
         }
 
-        function verify() {
-            if(document.getElementById('mPass').value === "1515") {
+        function login() {
+            if(document.getElementById('pIn').value === "1515") {
                 localStorage.setItem('is_admin', 'true');
-                document.getElementById('auth-overlay').style.display='none';
-                document.getElementById('admin-panel').style.display='flex';
-                Z_SQL.refresh();
+                location.reload();
             }
         }
 
-        function tab(evt, id) {
-            document.querySelectorAll('.t-content').forEach(c => c.classList.remove('active'));
+        function tab(e, id) {
+            document.querySelectorAll('.t-content').forEach(c => c.style.display='none');
             document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            evt.currentTarget.classList.add('active');
+            document.getElementById(id).style.display='block';
+            e.currentTarget.classList.add('active');
         }
 
         window.onload = async () => {
@@ -184,7 +186,7 @@
             const d = await r.json();
             const bans = await Z_SQL.query(`ban_listesi?ip=eq.${d.ip}`);
             if(bans.length > 0 && localStorage.getItem('is_admin') !== 'true') {
-                document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:100px;'>SYSTEM BANNED</h1>";
+                document.body.innerHTML = "<h1 style='color:red; text-align:center; padding-top:100px;'>ACCESS DENIED</h1>";
             } else {
                 await Z_SQL.query('ziyaretciler', 'POST', { ip: d.ip, cihaz_bilgisi: navigator.platform });
                 if(localStorage.getItem('is_admin') === 'true') {
@@ -194,9 +196,9 @@
             }
         };
 
-        // Sürükle Bırak
+        // Panel Sürükleme
         dragElement(document.getElementById("admin-panel"));
-        function dragElement(e){var n=0,t=0,o=0,u=0;function i(e){e=e||window.event;e.preventDefault();o=e.clientX;u=e.clientY;document.onmouseup=m;document.onmousemove=l}function l(i){i=i||window.event;i.preventDefault();n=o-i.clientX;t=u-i.clientY;o=i.clientX;u=i.clientY;e.style.top=e.offsetTop-t+"px";e.style.left=e.offsetLeft-n+"px"}function m(){document.onmouseup=null;document.onmousemove=null}document.getElementById("pDraggable").onmousedown=i}
+        function dragElement(e){var n=0,t=0,o=0,u=0;function i(e){e=e||window.event;e.preventDefault();o=e.clientX;u=e.clientY;document.onmouseup=m;document.onmousemove=l}function l(i){i=i||window.event;i.preventDefault();n=o-i.clientX;t=u-i.clientY;o=i.clientX;u=i.clientY;e.style.top=e.offsetTop-t+"px";e.style.left=e.offsetLeft-n+"px"}function m(){document.onmouseup=null;document.onmousemove=null}document.getElementById("pDrag").onmousedown=i}
     </script>
 </body>
 </html>
