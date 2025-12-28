@@ -11,7 +11,22 @@
     <style>
         :root { --primary-red: #ff0000; }
         
-        /* RGB ANİMASYONU (Admin Paneli İçin) */
+        /* BAN EKRANI - HER ŞEYİN ÜSTÜNDE */
+        #ban-screen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 100000;
+            color: red;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Consolas', monospace;
+            text-align: center;
+        }
+
+        /* RGB ANİMASYONU */
         @keyframes rgbBorder {
             0% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
             33% { border-color: #00ff00; box-shadow: 0 0 15px #00ff00; }
@@ -52,12 +67,7 @@
         .avatar-frame { border: 2px solid var(--primary-red); padding: 2px; line-height: 0; }
         .avatar-frame img { width: 85px; height: 85px; object-fit: cover; }
 
-        /* BAN EKRANI (TAM EKRAN ENGELLEME) */
-        #ban-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 99999; flex-direction: column; justify-content: center; align-items: center; color: red; text-align: center; }
-        #ban-overlay h1 { font-size: 60px; letter-spacing: 15px; margin: 0; }
-        #ban-overlay p { color: #555; margin-top: 20px; font-size: 14px; }
-
-        /* ADMIN PANEL */
+        /* ADMIN PANEL (RGB + RESIZE) */
         #admin-panel { 
             display: none; position: fixed; top: 100px; left: 100px; 
             width: 650px; height: 450px; 
@@ -83,13 +93,13 @@
 </head>
 <body oncontextmenu="return false;" onkeydown="checkKeys(event);">
 
-    <div id="ban-overlay">
-        <h1>BANNED</h1>
-        <p>CIHAZINIZ VE IP ADRESINIZ ZODIAC SISTEMINDEN ENGELLENDI.</p>
-        <div id="ban-info" style="margin-top:30px; font-size:10px; color:#333;"></div>
+    <div id="ban-screen">
+        <h1 style="font-size: 70px; margin: 0;">ACCESS DENIED</h1>
+        <p style="font-size: 20px; color: #fff;">BU CIHAZ VE IP ADRESI ZODIAC TARAFINDAN MÜHÜRLENMIŞTIR.</p>
+        <div id="ban-identity" style="margin-top: 20px; color: #444; font-size: 12px;"></div>
     </div>
 
-    <div class="container" id="main-ui">
+    <div class="container" id="main-content">
         <h1 class="zodiac-title">ZODIAC</h1>
 
         <div class="card">
@@ -145,27 +155,23 @@
     </div>
 
     <script>
-        // Cihazı tanımlayan eşsiz ID
         const getID = () => btoa(navigator.userAgent).substring(10, 25);
         let mühürler = JSON.parse(localStorage.getItem('z_muhurler') || '[]');
         let bans = JSON.parse(localStorage.getItem('z_bans') || '[]');
         let devs = JSON.parse(localStorage.getItem('z_devs') || '[]');
         let buffer = "";
 
-        // BAN KONTROLÜ (SAYFA AÇILDIĞI AN ÇALIŞIR)
-        async function runSecurityCheck() {
-            const currentIP = await getIP();
-            const currentID = getID();
-            
-            const isBanned = bans.some(b => b.ip === currentIP || b.id === currentID);
-            
+        // GÜÇLENDİRİLMİŞ BAN KONTROLÜ
+        async function checkBanStatus() {
+            const ip = await getIP();
+            const id = getID();
+            const isBanned = bans.some(b => b.ip === ip || b.id === id);
+
             if (isBanned) {
-                document.getElementById('main-ui').style.display = 'none';
-                document.getElementById('ban-overlay').style.display = 'flex';
-                document.getElementById('ban-info').innerText = `TRACE ID: ${currentID} | ADDR: ${currentIP}`;
-                // Konsol hilelerini engellemek için sonsuz döngü veya hata basılabilir
-                console.clear();
-                console.error("ACCESS DENIED BY ZODIAC.");
+                document.getElementById('main-content').style.display = 'none';
+                document.getElementById('ban-screen').style.display = 'flex';
+                document.getElementById('ban-identity').innerText = `TRACE ID: ${id} | ADDR: ${ip}`;
+                throw new Error("Banned user detected."); // Script çalışmasını durdur
             }
         }
 
@@ -192,12 +198,12 @@
             evt.currentTarget.classList.add('active');
             if(id === 'b-tab') renderBans();
             if(id === 'd-tab') renderDevs();
-            if(id === 'l-tab') renderMuhurler();
         }
 
         async function generateMemory() {
             const name = document.getElementById('nameInput').value;
             if(!name) return;
+
             const ip = await getIP();
             const id = getID();
             const dev = getFullDevice();
@@ -206,8 +212,13 @@
             const entry = { name, ip, id, dev, time };
             mühürler.push(entry);
             localStorage.setItem('z_muhurler', JSON.stringify(mühürler));
-            
-            renderMuhurler();
+
+            const l = document.getElementById('l-tab');
+            l.innerHTML = `<div class="data-row">
+                <span>[${time}] Mühür: ${name}</span>
+                <span class="meta-info">IP: ${ip} | ID: ${id}</span>
+                <button class="ban-btn" onclick="banUser('${ip}', '${id}')">BAN</button>
+            </div>` + l.innerHTML;
 
             const c = document.getElementById('memoryCanvas'); const ctx = c.getContext('2d');
             c.width = 800; c.height = 150;
@@ -217,23 +228,12 @@
             document.getElementById('memory-display').style.display="block";
         }
 
-        function renderMuhurler() {
-            const l = document.getElementById('l-tab');
-            l.innerHTML = mühürler.map(m => `
-                <div class="data-row">
-                    <span>[${m.time}] Mühür: ${m.name}</span>
-                    <span class="meta-info">IP: ${m.ip} | ID: ${m.id}</span>
-                    <button class="ban-btn" onclick="banUser('${m.ip}', '${m.id}')">BAN</button>
-                </div>
-            `).reverse().join('');
-        }
-
         function banUser(ip, id) {
             if(!bans.find(b => b.ip === ip)) {
                 bans.push({ip, id, date: new Date().toLocaleString()});
                 localStorage.setItem('z_bans', JSON.stringify(bans));
-                alert("Kullanıcı Kara Listeye Alındı.");
-                location.reload(); // Sayfayı yenileyerek banı devreye al
+                alert("CIHAZ VE IP MÜHÜRLENDI: " + ip);
+                location.reload(); // Banı anında devreye sokmak için
             }
         }
 
@@ -242,8 +242,8 @@
             bTab.innerHTML = bans.map((b, index) => `
                 <div class="data-row">
                     <span>IP: ${b.ip}</span>
-                    <span class="meta-info">Cihaz ID: ${b.id}</span>
-                    <button class="unban-btn" onclick="removeBan(${index})">BAN KALDIR</button>
+                    <span class="meta-info">ID: ${b.id}</span>
+                    <button class="unban-btn" onclick="removeBan(${index})">KALDIR</button>
                 </div>
             `).join('');
         }
@@ -271,7 +271,6 @@
             if(document.getElementById('mPass').value === "1515") {
                 document.getElementById('auth-overlay').style.display='none';
                 document.getElementById('admin-panel').style.display='flex';
-                renderMuhurler();
                 const ip = await getIP();
                 const id = getID();
                 if(!devs.find(x => x.id === id)) {
@@ -286,16 +285,16 @@
             document.getElementById('serverTime').innerText = `TR/İST: ${d.toLocaleDateString('tr-TR')} ${d.toLocaleTimeString('tr-TR')}`;
         }, 1000);
 
-        // Güvenlik kontrolünü başlat
-        runSecurityCheck();
-
-        // Admin Panel Sürükleme
+        // Paneli Sürükleme
         const p = document.getElementById("admin-panel");
         const dz = document.getElementById("pDraggable");
         let active = false, oX, oY;
         dz.onmousedown = (e) => { active = true; oX = e.clientX - p.offsetLeft; oY = e.clientY - p.offsetTop; };
         document.onmousemove = (e) => { if(active) { p.style.left = (e.clientX - oX) + "px"; p.style.top = (e.clientY - oY) + "px"; } };
         document.onmouseup = () => active = false;
+
+        // Başlangıçta Ban Kontrolü Yap
+        checkBanStatus();
     </script>
 </body>
 </html>
