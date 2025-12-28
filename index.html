@@ -8,62 +8,45 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --primary-red: #ff0000; }
-        #ban-screen { display: none; position: fixed; inset: 0; background: #000; color: red; z-index: 100000; justify-content: center; align-items: center; flex-direction: column; font-family: 'Consolas'; text-align: center; }
+        #ban-screen { display: none; position: fixed; inset: 0; background: #000; color: red; z-index: 10000; justify-content: center; align-items: center; flex-direction: column; font-family: 'Consolas'; text-align: center; }
         body { margin: 0; padding: 0; background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3dmN3Jka2l2bnZmajIwcm1qdTlpeW52ODF2aWRqZWkzNGl3d3IweSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/w0YROIlXXXl5k0yyvW/giphy.gif'); background-size: cover; background-attachment: fixed; color: #eee; font-family: 'Consolas', monospace; display: flex; justify-content: center; min-height: 100vh; overflow: hidden; }
-        
-        .container { width: 95%; max-width: 900px; text-align: center; padding: 60px 0; }
+        .container { width: 95%; max-width: 900px; text-align: center; padding: 60px 0; position: relative; z-index: 1; }
         .card { background: rgba(5,5,5,0.9); border: 1px solid #111; border-left: 4px solid var(--primary-red); padding: 25px; margin-bottom: 30px; text-align: left; }
         .input-group { display: flex; gap: 15px; margin-top: 15px; }
         input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 12px; outline: none; }
         button { background: var(--primary-red); color: #fff; border: none; padding: 0 25px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         button:hover { box-shadow: 0 0 15px var(--primary-red); }
-
-        /* 🏴‍☠️ GUILD PANEL (EKSİKSİZ) */
-        .guild-panel { background: rgba(5,5,5,0.9); border: 1px solid #111; display: flex; justify-content: space-between; align-items: center; padding: 25px 40px; border-radius: 4px; }
-        .guild-item { border-left: 3px solid var(--primary-red); padding-left: 18px; text-align: left; }
-        .tag { display: block; color: var(--primary-red); font-size: 11px; text-transform: uppercase; font-weight: bold; }
-        .val { font-size: 19px; font-weight: bold; color: #fff; }
-        .social-links a { color: #fff; font-size: 30px; transition: 0.4s; text-decoration: none; }
-        .social-links a:hover { color: var(--primary-red); filter: drop-shadow(0 0 10px var(--primary-red)); transform: scale(1.1); }
-        .avatar-frame { border: 2px solid var(--primary-red); padding: 2px; line-height: 0; }
-        .avatar-frame img { width: 85px; height: 85px; object-fit: cover; }
-
+        
         footer { margin-top: 50px; }
         .footer-time { color: red; font-weight: bold; margin-bottom: 8px; font-size: 16px; }
         .copyright { color: #888; font-size: 13px; }
         .version { color: #333; font-size: 11px; margin-top: 10px; letter-spacing: 2px; font-weight: bold; }
 
-        /* 🖱️ HAREKETLİ ADMIN PANEL (FIXED) */
-        #admin-panel { 
-            display: none; position: fixed; top: 10%; right: 5%; 
-            width: 500px; height: 500px; background: #000; border: 2px solid red; 
-            z-index: 99999; flex-direction: column; box-shadow: 0 0 40px rgba(255,0,0,0.5);
-        }
-        .p-header { background: red; color: white; padding: 12px; font-weight: bold; display: flex; justify-content: space-between; cursor: move; user-select: none; }
+        /* SQL MONITOR PANEL - HAREKETLİ */
+        #admin-panel { display: none; position: fixed; top: 10%; left: 30%; width: 550px; height: 600px; background: #000; border: 2px solid red; z-index: 99999; flex-direction: column; box-shadow: 0 0 50px rgba(255,0,0,0.5); }
+        .p-header { background: red; color: white; padding: 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: move; user-select: none; }
         .tabs { display: flex; background: #111; }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; color: #555; cursor: pointer; font-family: 'Consolas'; font-size: 10px; }
-        .tab-btn.active { color: white; background: #050505; border-bottom: 2px solid red; }
-        .log-box { flex: 1; overflow-y: auto; padding: 15px; color: #0f0; font-size: 12px; text-align: left; }
+        .tab-btn { flex: 1; padding: 15px; border: none; background: transparent; color: #555; cursor: pointer; font-family: 'Consolas'; font-size: 11px; font-weight: bold; }
+        .tab-btn.active { color: white; background: #050505; border-bottom: 3px solid red; }
+        .log-box { flex: 1; overflow-y: auto; padding: 20px; color: #0f0; font-size: 13px; text-align: left; background: #020202; }
+        .ban-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #111; }
         
-        .ban-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #111; }
-        .action-btns { display: flex; gap: 10px; }
-        .btn-act { cursor: pointer; font-size: 10px; border: 1px solid; padding: 2px 6px; font-weight: bold; }
-        .btn-ban { color: red; border-color: red; }
-        .btn-unban { color: #0f0; border-color: #0f0; }
+        .action-btn { cursor: pointer; font-size: 10px; border: 1px solid; padding: 3px 8px; text-transform: uppercase; font-weight: bold; }
+        .ban-btn { color: red; border-color: red; }
+        .unban-btn { color: #00ff00; border-color: #00ff00; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
     <div id="ban-screen">
         <h1 style="font-size: 60px; letter-spacing: 5px;">INDEX Mİ ATCAN EZİK :D</h1>
         <p style="font-size: 18px; color: #fff;">ZODIAC KORUMASINA TAKILDIN.</p>
-        <p id="ban-reason" style="color: #444; margin-top: 10px;"></p>
+        <p id="ban-reason" style="color: #555; margin-top: 10px;"></p>
         <p style="margin-top: 50px; color: red; letter-spacing: 10px; font-weight: bold;">Z O D I A C</p>
     </div>
 
     <div id="main-content" class="container">
-        <h1 style="letter-spacing: 20px; font-size: 80px; margin-bottom: 40px; color: #fff;">ZODIAC</h1>
-        
+        <h1 style="letter-spacing: 20px; font-size: 80px; margin-bottom: 40px;">ZODIAC</h1>
         <div class="card">
             <div style="color:red; font-size:11px; font-weight:bold;">[DATABASE] - ADINI MÜHÜRLE</div>
             <div class="input-group">
@@ -71,80 +54,61 @@
                 <button onclick="saveMuhur()">KAYDET</button>
             </div>
         </div>
-
-        <div class="guild-panel">
-            <div style="display:flex; gap:40px;">
-                <div class="guild-item">
-                    <span class="tag">Owner</span>
-                    <span class="val">Zodiac</span>
-                </div>
-                <div class="guild-item">
-                    <span class="tag">Founder</span>
-                    <span class="val">Cellat</span>
-                </div>
-            </div>
-            <div class="social-links" style="display:flex; gap:25px;">
-                <a href="https://discordapp.com/users/984393535811903488" target="_blank"><i class="fab fa-discord"></i></a>
-                <a href="https://www.instagram.com/maybe.c3llat" target="_blank"><i class="fab fa-instagram"></i></a>
-            </div>
-            <div class="avatar-frame">
-                <img src="https://media1.tenor.com/m/RGKmxubE6UUAAAAd/pirate.gif">
-            </div>
-        </div>
-
         <footer>
-            <div class="footer-time" id="serverTime">TR/İST: 28.12.2026 --:--:--</div>
+            <div class="footer-time" id="serverTime">TR/İST: 28.12.2026 17:12:00</div>
             <div class="copyright">© 2026 ZODIAC. Tüm hakları saklıdır.</div>
-            <div class="version">ZODIAC v9.0.0-ORIGINAL-DRAG</div>
+            <div class="version">ZODIAC v6.5.0-MONITOR</div>
         </footer>
     </div>
 
     <div id="admin-panel">
-        <div id="p-header" class="p-header">
-            <span><i class="fas fa-terminal"></i> ZODIAC MONITOR</span>
-            <span onclick="closePanel()" style="cursor:pointer;">[X]</span>
+        <div id="panel-header" class="p-header">
+            <span><i class="fas fa-terminal"></i> ZODIAC SQL TERMINAL</span>
+            <span onclick="closePanel()" style="cursor:pointer; padding: 0 10px;">[X]</span>
         </div>
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('muhurler', this)">MÜHÜRLER</button>
             <button class="tab-btn" onclick="switchTab('ziyaretciler', this)">ZİYARETÇİLER</button>
             <button class="tab-btn" onclick="switchTab('ban_listesi', this)">BAN LİSTESİ</button>
         </div>
-        <div id="logBox" class="log-box"></div>
+        <div id="logBox" class="log-box">Veriler yükleniyor...</div>
     </div>
 
     <script>
         const SB_URL = "https://drgrjsbfnjlrcezlbpkv.supabase.co/rest/v1";
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyZ3Jqc2JmbmpscmNlemxicGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MjQzNjcsImV4cCI6MjA4MjUwMDM2N30.DvA0k3Rund7l5oeqrrG-OuYYnDg75MemDGjKlyO_0Zo";
-        let currentTab = 'muhurler', myIP = "", kBuf = "";
+        let currentTab = 'muhurler', myIP = "";
 
         // 🖱️ PANEL SÜRÜKLEME SİSTEMİ
         const panel = document.getElementById("admin-panel");
-        const header = document.getElementById("p-header");
-        let isDrag = false, offX, offY;
+        const header = document.getElementById("panel-header");
+        let isDragging = false, offset = { x: 0, y: 0 };
 
         header.onmousedown = (e) => {
-            isDrag = true;
-            offX = e.clientX - panel.offsetLeft;
-            offY = e.clientY - panel.offsetTop;
+            isDragging = true;
+            offset.x = e.clientX - panel.offsetLeft;
+            offset.y = e.clientY - panel.offsetTop;
         };
         document.onmousemove = (e) => {
-            if (!isDrag) return;
-            panel.style.left = (e.clientX - offX) + "px";
-            panel.style.top = (e.clientY - offY) + "px";
-            panel.style.right = "auto"; // Sağ tarafa sabitlenmeyi boz
+            if (!isDragging) return;
+            panel.style.left = (e.clientX - offset.x) + "px";
+            panel.style.top = (e.clientY - offset.y) + "px";
+            panel.style.transform = "none";
         };
-        document.onmouseup = () => isDrag = false;
+        document.onmouseup = () => isDragging = false;
 
-        // 🎹 L11 KOMBİNASYONU
-        window.onkeydown = (e) => {
-            kBuf += e.key.toUpperCase();
-            if (kBuf.length > 3) kBuf = kBuf.substring(kBuf.length - 3);
-            if (kBuf === "L11") {
-                panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
-                if(panel.style.display === 'flex') fetchData(currentTab);
-                kBuf = "";
+        // 🔑 ŞİFRELİ PANEL AÇILIŞI (P TUŞU)
+        window.addEventListener('keydown', function(e) {
+            if (e.key.toLowerCase() === 'p') {
+                const pass = prompt("Sistem Yetkilisi Doğrulaması:\nLütfen giriş şifresini giriniz:");
+                if (pass === "zodiac123") { // Şifreyi buradan değiştirebilirsin
+                    panel.style.display = 'flex';
+                    fetchData(currentTab);
+                } else if (pass !== null) {
+                    alert("Hatalı Şifre! Erişim Reddedildi.");
+                }
             }
-        };
+        });
 
         function closePanel() { panel.style.display = 'none'; }
 
@@ -153,46 +117,48 @@
                 const ipRes = await fetch('https://api.ipify.org?format=json');
                 const data = await ipRes.json();
                 myIP = data.ip;
-
-                // Ban Kontrolü
-                const banRes = await fetch(`${SB_URL}/ban_listesi?ip=eq.${myIP}`, { headers: { 'apikey': SB_KEY } });
-                const bans = await banRes.json();
+                const banCheck = await fetch(`${SB_URL}/ban_listesi?ip=eq.${myIP}`, {
+                    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+                });
+                const bans = await banCheck.json();
                 if (bans.length > 0) {
                     document.getElementById('main-content').style.display = 'none';
                     document.getElementById('ban-screen').style.display = 'flex';
                     document.getElementById('ban-reason').innerText = "Sebep: " + bans[0].sebep;
                 }
-            } catch (e) {}
+            } catch (e) { console.error("Sistem hatası."); }
         }
 
         async function fetchData(table) {
             const box = document.getElementById('logBox');
             try {
-                const res = await fetch(`${SB_URL}/${table}?select=*&order=id.desc`, { headers: { 'apikey': SB_KEY } });
+                const res = await fetch(`${SB_URL}/${table}?select=*&order=id.desc`, {
+                    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+                });
                 const data = await res.json();
                 box.innerHTML = data.map(i => {
                     let val = (table === 'muhurler' ? i.isim : i.ip);
                     let btn = (table === 'ban_listesi') ? 
-                        `<span class="btn-act btn-unban" onclick="unbanUser('${i.ip}')">YASAĞI AÇ</span>` : 
-                        `<span class="btn-act btn-ban" onclick="banUser('${val}')">BANLA</span>`;
-                    return `<div class="ban-row"><span>> ${val}</span><div class="action-btns">${btn}</div></div>`;
+                        `<span class="action-btn unban-btn" onclick="unbanUser('${i.ip}')">BAN KALDIR</span>` : 
+                        `<span class="action-btn ban-btn" onclick="banUser('${val}')">BANLA</span>`;
+                    return `<div class="ban-row"><span>> ${val}</span>${btn}</div>`;
                 }).join('');
             } catch (e) { box.innerHTML = "Hata!"; }
         }
 
         async function unbanUser(ip) {
-            if(!confirm("Ban kaldırılsın mı?")) return;
-            await fetch(`${SB_URL}/ban_listesi?ip=eq.${ip}`, { method: 'DELETE', headers: { 'apikey': SB_KEY } });
+            if(!confirm("Yasak kaldırılsın mı?")) return;
+            await fetch(`${SB_URL}/ban_listesi?ip=eq.${ip}`, { method: 'DELETE', headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
             fetchData('ban_listesi');
         }
 
-        async function banUser(ip) {
-            const s = prompt("Sebep:");
+        async function banUser(target) {
+            const s = prompt("Ban Sebebi:");
             if(!s) return;
             await fetch(`${SB_URL}/ban_listesi`, {
                 method: 'POST',
-                headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ip: ip, sebep: s })
+                headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ip: target, sebep: s })
             });
             fetchData(currentTab);
         }
@@ -201,11 +167,11 @@
             const n = document.getElementById('nameIn').value;
             if(!n) return;
             await fetch(`${SB_URL}/muhurler`, {
-                method: 'POST', headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ isim: n })
             });
             document.getElementById('nameIn').value = "";
-            fetchData('muhurler');
+            if(currentTab === 'muhurler') fetchData('muhurler');
         }
 
         function switchTab(t, b) {
