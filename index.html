@@ -44,7 +44,6 @@
         .avatar-frame { border: 2px solid var(--primary-red); padding: 2px; line-height: 0; }
         .avatar-frame img { width: 85px; height: 85px; object-fit: cover; }
         
-        /* Gelişmiş Admin Panel */
         #admin-panel { display: none; position: fixed; top: 100px; left: 100px; width: 900px; height: 550px; background: #000; border: 2px solid red; z-index: 9999; flex-direction: column; overflow: hidden; resize: both; animation: rgbBorder 5s infinite; }
         .p-header { background: #111; color: white; padding: 12px; cursor: move; font-size: 11px; font-weight: bold; display: flex; justify-content: space-between; border-bottom: 1px solid #222; }
         .p-tabs { display: flex; background: #080808; }
@@ -58,6 +57,9 @@
         
         #auth-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 10000; justify-content: center; align-items: center; }
         footer { margin-top: 50px; color: #444; font-size: 12px; }
+
+        .ban-btn { background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; font-size: 9px; }
+        .unban-btn { background: #444; color: white; border: none; padding: 5px 10px; cursor: pointer; }
     </style>
 </head>
 <body onkeydown="checkKeys(event);">
@@ -130,7 +132,7 @@
 
         <div id="b-tab" class="t-content" style="display:none;"></div>
         
-        <div style="padding:10px; background:#111;"><button onclick="systemReset()" style="width:100%; background:#222; color:red; border:none; padding:8px; font-size:9px;">DATABASE RESET</button></div>
+        <div style="padding:10px; background:#111;"><button onclick="systemReset()" style="width:100%; background:#222; color:red; border:none; padding:8px; font-size:9px; cursor:pointer;">DATABASE RESET</button></div>
     </div>
 
     <div id="auth-overlay">
@@ -142,25 +144,25 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'URL_BURAYA';
-        const SUPABASE_KEY = 'KEY_BURAYA';
+        // CANLI SQL BAĞLANTISI
+        const SUPABASE_URL = 'https://drgrjsbfnjlrcezlbpkv.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyZ3Jqc2JmbmpscmNlemxicGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MjQzNjcsImV4cCI6MjA4MjUwMDM2N30.DvA0k3Rund7l5oeqrrG-OuYYnDg75MemDGjKlyO_0Zo';
+        
         let _supabase;
         try { _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.log("Supabase Offline"); }
 
         let buffer = "";
         let isAdmin = false;
         const getID = () => btoa(navigator.userAgent).substring(10, 25);
-
         const getNow = () => new Date().toLocaleString('tr-TR');
         const getDevice = () => {
             const ua = navigator.userAgent;
             if (/android/i.test(ua)) return "Android";
             if (/iPhone|iPad/i.test(ua)) return "iOS";
             if (/Windows/i.test(ua)) return "Windows PC";
-            return "Unknown";
+            return "PC/Other";
         };
 
-        // ZİYARETÇİ KAYDI (SİTEYE GİRİLDİĞİNDE TETİKLENİR)
         async function logVisitor() {
             if(!_supabase) return;
             const ip = await getIP();
@@ -227,7 +229,6 @@
 
         async function renderLogs() {
             if(!_supabase) return;
-            // Mühürleri Yükle
             const { data: mData } = await _supabase.from('muhurler').select('*').order('created_at', { ascending: false });
             document.getElementById('log-body').innerHTML = mData.map(m => `
                 <tr>
@@ -238,7 +239,6 @@
                     <td><button class="ban-btn" onclick="banProcess('${m.ip}', '${m.device_id}')">BAN</button></td>
                 </tr>`).join('');
 
-            // Ziyaretçileri Yükle
             const { data: vData } = await _supabase.from('ziyaretciler').select('*').order('created_at', { ascending: false }).limit(50);
             document.getElementById('visitor-body').innerHTML = vData.map(v => `
                 <tr>
@@ -259,15 +259,28 @@
         async function renderBans() {
             const { data } = await _supabase.from('bans').select('*');
             document.getElementById('b-tab').innerHTML = data.map(b => `
-                <div class="data-row" style="padding:10px; border-bottom:1px solid #222;">
-                    <b>${b.ip}</b> <small>(${b.device_id})</small>
-                    <button class="unban-btn" onclick="unbanProcess('${b.id}')" style="float:right;">KALDIR</button>
+                <div style="padding:10px; border-bottom:1px solid #222; display:flex; justify-content:space-between; align-items:center;">
+                    <span><b>${b.ip}</b> <small>(${b.device_id})</small></span>
+                    <button class="unban-btn" onclick="unbanProcess('${b.id}')">KALDIR</button>
                 </div>`).join('');
         }
 
         async function unbanProcess(id) {
             await _supabase.from('bans').delete().eq('id', id);
             renderBans();
+        }
+
+        // DATABASE RESET FONKSİYONU
+        async function systemReset() {
+            if(confirm("TÜM VERİLER SİLİNECEK! Emin misin?")) {
+                const pass = prompt("Güvenlik Onayı: 'ZODIAC-DELETE' yazın.");
+                if(pass === "ZODIAC-DELETE") {
+                    await _supabase.from('muhurler').delete().neq('id', 0);
+                    await _supabase.from('ziyaretciler').delete().neq('id', 0);
+                    alert("Veritabanı temizlendi.");
+                    renderLogs();
+                }
+            }
         }
 
         function verify() {
@@ -299,7 +312,7 @@
         document.onmousemove = (e) => { if(active) { p.style.left = (e.clientX - oX) + "px"; p.style.top = (e.clientY - oY) + "px"; } };
         document.onmouseup = () => active = false;
 
-        logVisitor(); // Sayfa yüklendiğinde herkesi kaydetmeye başla.
+        logVisitor();
     </script>
 </body>
 </html>
