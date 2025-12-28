@@ -116,7 +116,7 @@
         <footer>
             <div id="serverTime" style="color: red; font-weight: bold; margin-bottom: 5px;">Yükleniyor...</div>
             <div>© 2026 ZODIAC. Tüm hakları saklıdır.</div>
-            <div style="font-size:9px; margin-top:5px; color:#222;">ZODIAC v10.0-ARMORED CLOUD</div>
+            <div style="font-size:9px; margin-top:5px; color:#222;">ZODIAC v10.2-ARMORED CLOUD</div>
         </footer>
     </div>
 
@@ -140,10 +140,9 @@
     </div>
 
     <script>
-        // --- SUPABASE BAĞLANTISI ---
-        const SUPABASE_URL = 'SENİN_URL_BURAYA';
-        const SUPABASE_KEY = 'SENİN_KEY_BURAYA';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = 'URL_BURAYA';
+        const SUPABASE_KEY = 'KEY_BURAYA';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const getID = () => btoa(navigator.userAgent).substring(10, 25);
         let isAdmin = false;
@@ -164,13 +163,10 @@
             return `${os} (${navigator.platform})`;
         }
 
-        // --- GÜVENLİK KONTROLÜ ---
         async function checkSecurity() {
             const ip = await getIP();
             const id = getID();
-            
-            const { data: banData } = await supabase.from('bans').select('*').or(`ip.eq.${ip},device_id.eq.${id}`);
-            
+            const { data: banData } = await _supabase.from('bans').select('*').or(`ip.eq.${ip},device_id.eq.${id}`);
             if(banData && banData.length > 0) {
                 document.getElementById('main-content').innerHTML = "";
                 document.getElementById('ban-screen').style.display = 'flex';
@@ -180,24 +176,17 @@
         }
         checkSecurity();
 
-        // --- MÜHÜRLEME (YENİ DETAYLI KAYIT) ---
         async function generateMemory() {
             const name = document.getElementById('nameInput').value;
             if(!name) return;
-
             const ip = await getIP();
             const id = getID();
             const dev = getFullDevice();
 
-            // Supabase'e tüm detayları gönder
-            await supabase.from('muhurler').insert([{ 
-                name: name, 
-                ip: ip, 
-                device_id: id, 
-                device_info: dev 
+            await _supabase.from('muhurler').insert([{ 
+                name: name, ip: ip, device_id: id, device_info: dev 
             }]);
 
-            // Görsel Efekt
             const c = document.getElementById('memoryCanvas'); const ctx = c.getContext('2d');
             c.width = 800; c.height = 150;
             ctx.fillStyle="#000"; ctx.fillRect(0,0,800,150);
@@ -205,29 +194,30 @@
             ctx.fillText(name.toUpperCase(), 400, 85);
             document.getElementById('memory-display').style.display="block";
             document.getElementById('nameInput').value = "";
-            
             if(isAdmin) renderLogs();
         }
 
-        // --- ADMIN PANEL (İSTİHBARAT SATIRI ENTEGRELİ) ---
         async function renderLogs() {
-            const { data } = await supabase.from('muhurler').select('*').order('created_at', { ascending: false });
+            const { data } = await _supabase.from('muhurler').select('*').order('created_at', { ascending: false });
             const logTab = document.getElementById('l-tab');
             
             logTab.innerHTML = data.map(m => {
-                const timeStr = new Date(m.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                const d = new Date(m.created_at);
+                const dateStr = d.toLocaleDateString('tr-TR');
+                const timeStr = d.toLocaleTimeString('tr-TR'); // Saniye dahil: 20:21:54
+                
                 return `
                     <div class="data-row">
                         <div style="flex: 1;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="display: flex; align-items: baseline; gap: 8px;">
                                 <span style="color: #0f0; font-weight: bold; font-size: 13px;">${m.name}</span>
-                                <span style="color: #444; font-size: 9px;">[${timeStr}]</span>
+                                <span style="color: #444; font-size: 9px; font-family: 'Courier New';">[${dateStr} ${timeStr}]</span>
                             </div>
-                            <div style="font-size: 9px; color: #777; margin-top: 2px;">
+                            <div style="font-size: 9px; color: #777; margin-top: 3px;">
                                 <span style="color: red;">IP:</span> ${m.ip} | <span style="color: red;">ID:</span> ${m.device_id}
                             </div>
-                            <div style="font-size: 9px; color: #444;">
-                                <i class="fas fa-microchip"></i> ${m.device_info}
+                            <div style="font-size: 9px; color: #444; font-style: italic;">
+                                <i class="fas fa-microchip" style="font-size: 8px;"></i> ${m.device_info}
                             </div>
                         </div>
                         <button class="ban-btn" onclick="banProcess('${m.ip}', '${m.device_id}')">BAN</button>
@@ -237,13 +227,13 @@
         }
 
         async function banProcess(ip, id) {
-            await supabase.from('bans').insert([{ ip, device_id: id }]);
-            alert("ERİŞİM ENGELLENDİ.");
+            await _supabase.from('bans').insert([{ ip, device_id: id }]);
+            alert("SİSTEMDEN MEN EDİLDİ.");
             renderBans();
         }
 
         async function renderBans() {
-            const { data } = await supabase.from('bans').select('*');
+            const { data } = await _supabase.from('bans').select('*');
             document.getElementById('b-tab').innerHTML = data.map(b => `
                 <div class="data-row">
                     <span>${b.ip} <small style="color:#444">(${b.device_id})</small></span>
@@ -253,11 +243,10 @@
         }
 
         async function unbanProcess(id) {
-            await supabase.from('bans').delete().eq('id', id);
+            await _supabase.from('bans').delete().eq('id', id);
             renderBans();
         }
 
-        // --- SİSTEM AYARLARI ---
         function checkKeys(e) {
             buffer += e.key.toUpperCase();
             if(buffer.includes("L11")) { document.getElementById('auth-overlay').style.display='flex'; buffer=""; }
@@ -282,8 +271,8 @@
         }
 
         async function systemReset() {
-            if(confirm("Tüm bulut veritabanı sıfırlanacak. Emin misin?")) {
-                await supabase.from('muhurler').delete().neq('name', '0');
+            if(confirm("Tüm mühürler silinecek. Onaylıyor musun?")) {
+                await _supabase.from('muhurler').delete().neq('name', '0');
                 renderLogs();
             }
         }
@@ -293,7 +282,6 @@
             document.getElementById('serverTime').innerText = `TR/İST: ${d.toLocaleDateString('tr-TR')} ${d.toLocaleTimeString('tr-TR')}`;
         }, 1000);
 
-        // Sürükleme Mantığı
         const p = document.getElementById("admin-panel");
         const dz = document.getElementById("pDraggable");
         let active = false, oX, oY;
