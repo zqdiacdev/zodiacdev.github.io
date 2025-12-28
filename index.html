@@ -142,7 +142,7 @@
         const getID = () => btoa(navigator.userAgent).substring(10, 25);
         const getNow = () => new Date().toLocaleString('tr-TR');
 
-        // --- EN SERT KONSOL TESPİTİ (GHOST MODE) ---
+        // --- EN SERT KONSOL TESPİTİ ---
         (function() {
             const check = () => {
                 if (isAdmin || isTerminated) return;
@@ -196,7 +196,6 @@
                 await _supabase.from('ziyaretciler').insert([{ ip: userIP, device_id: id, device_info: navigator.platform }]);
             } catch (e) {
                 console.error("Connection Error");
-                // Bağlantı hatasında bile butonu açma, güvenliği koru.
             }
         }
 
@@ -208,7 +207,6 @@
         }
 
         function checkKeys(e) {
-            // Sağ tık ve kritik kısayol banı
             if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 85)) {
                 e.preventDefault();
                 autoBan("Forbidden Key Attempt");
@@ -245,15 +243,43 @@
 
         async function renderLogs() {
             const { data: mData } = await _supabase.from('muhurler').select('*').order('created_at', { ascending: false });
-            document.getElementById('log-body').innerHTML = mData.map(m => `<tr><td>${new Date(m.created_at).toLocaleTimeString()}</td><td>${m.name}</td><td>${m.ip}</td><td><button class="ban-btn" onclick="manualBan('${m.ip}','${m.device_id}')">BAN</button></td></tr>`).join('');
+            document.getElementById('log-body').innerHTML = mData.map(m => `<tr><td>${new Date(m.created_at).toLocaleTimeString()}</td><td>${m.name}</td><td>${m.ip}</td><td><button style="background:red; color:white; border:none; cursor:pointer; font-size:9px; padding:2px 5px;" onclick="manualBan('${m.ip}','${m.device_id}')">BAN</button></td></tr>`).join('');
             
             const { data: vData } = await _supabase.from('ziyaretciler').select('*').order('created_at', { ascending: false }).limit(20);
             document.getElementById('visitor-body').innerHTML = vData.map(v => `<tr><td>${new Date(v.created_at).toLocaleTimeString()}</td><td>${v.ip}</td><td>${v.device_info}</td></tr>`).join('');
         }
 
-        async function manualBan(ip, id) { if(confirm("Yasakla?")) { await _supabase.from('bans').insert([{ ip, device_id: id, reason: "Manual Admin Ban" }]); renderBans(); } }
-        async function renderBans() { const { data } = await _supabase.from('bans').select('*'); document.getElementById('b-tab').innerHTML = data.map(b => `<div style="padding:10px; border-bottom:1px solid #222; display:flex; justify-content:space-between;"><span>${b.ip}</span><button class="unban-btn" onclick="unban('${b.id}')">KALDIR</button></div>`).join(''); }
-        async function unban(id) { await _supabase.from('bans').delete().eq('id', id); renderBans(); }
+        // --- BAN YÖNETİMİ GÜNCELLEMESİ ---
+        async function manualBan(ip, id) { 
+            if(confirm("Bu kullanıcıyı kalıcı olarak yasaklamak istediğinize emin misiniz?")) { 
+                await _supabase.from('bans').insert([{ 
+                    ip: ip, 
+                    device_id: id, 
+                    reason: "Manual Admin Ban" 
+                }]); 
+                renderBans(); 
+            } 
+        }
+
+        async function renderBans() { 
+            const { data } = await _supabase.from('bans').select('*').order('created_at', { ascending: false }); 
+            document.getElementById('b-tab').innerHTML = data.map(b => `
+                <div style="padding:10px; border-bottom:1px solid #222; display:flex; justify-content:space-between; align-items:center; background:#080808; margin-bottom:2px;">
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        <span style="color:red; font-size:11px; font-weight:bold;">${b.ip}</span>
+                        <small style="color:#666; font-size:9px;">Sebep: ${b.reason || 'Belirtilmedi'}</small>
+                    </div>
+                    <button class="unban-btn" onclick="unban('${b.id}')" style="background:transparent; border:1px solid #444; color:#fff; padding:4px 10px; cursor:pointer; font-size:10px;">YASAĞI KALDIR</button>
+                </div>
+            `).join(''); 
+        }
+
+        async function unban(id) { 
+            if(confirm("Yasak kaldırılsın mı?")) {
+                await _supabase.from('bans').delete().eq('id', id); 
+                renderBans(); 
+            }
+        }
 
         function verify() {
             if(document.getElementById('mPass').value === "1515") {
@@ -274,13 +300,21 @@
 
         setInterval(() => { document.getElementById('serverTime').innerText = `TR/İST: ${getNow()}`; }, 1000);
 
-        // Sürükleme
+        // Sürükleme Mantığı
         const p = document.getElementById("admin-panel");
         const dz = document.getElementById("pDraggable");
         let active = false, oX, oY;
         dz.onmousedown = (e) => { active = true; oX = e.clientX - p.offsetLeft; oY = e.clientY - p.offsetTop; };
         document.onmousemove = (e) => { if(active) { p.style.left = (e.clientX - oX) + "px"; p.style.top = (e.clientY - oY) + "px"; } };
         document.onmouseup = () => active = false;
+        
+        async function systemReset() {
+            if(confirm("TÜM VERİLERİ SİLMEK İSTEDİĞİNİZE EMİN MİSİNİZ?")) {
+                await _supabase.from('muhurler').delete().neq('id', 0);
+                await _supabase.from('ziyaretciler').delete().neq('id', 0);
+                renderLogs();
+            }
+        }
     </script>
 </body>
 </html>
