@@ -11,20 +11,22 @@
     <style>
         :root { --primary-red: #ff0000; }
         
-        /* BAN EKRANI - HER ŞEYİN ÜSTÜNDE */
+        /* GERÇEK BAN EKRANI */
         #ban-screen {
             display: none;
             position: fixed;
             inset: 0;
             background: #000;
-            z-index: 100000;
-            color: red;
+            z-index: 1000000;
+            color: #fff;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             font-family: 'Consolas', monospace;
             text-align: center;
         }
+        #ban-screen h1 { font-size: 80px; color: red; margin: 0; text-shadow: 0 0 20px red; }
+        #ban-screen p { font-size: 30px; margin-top: 20px; font-weight: bold; }
 
         /* RGB ANİMASYONU */
         @keyframes rgbBorder {
@@ -46,7 +48,6 @@
         .container { width: 95%; max-width: 900px; text-align: center; padding: 60px 0; z-index: 1; }
         .zodiac-title { font-size: clamp(50px, 12vw, 100px); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 20px; margin-bottom: 50px; display: inline-block; }
         
-        /* 1. SIRADAKİ INPUT KARTI */
         .card { background: rgba(5, 5, 5, 0.9); border: 1px solid rgba(255, 0, 0, 0.2); border-left: 4px solid var(--primary-red); padding: 25px; margin-bottom: 20px; text-align: left; }
         .input-group { display: flex; gap: 15px; margin-top: 15px; }
         input { flex: 1; background: rgba(0, 0, 0, 0.8); border: 1px solid #333; color: #fff; padding: 12px; outline: none; border-radius: 0; }
@@ -54,7 +55,6 @@
         button { background: var(--primary-red); color: #fff; border: none; padding: 0 25px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         button:hover { animation: glow 0.8s infinite; }
 
-        /* 2. SIRADAKİ ORTAYA GELEN SİYAH PANEL */
         .guild-panel { background: rgba(5, 5, 5, 0.98); border: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; padding: 25px 40px; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 30px; }
         .info-grid { display: flex; gap: 40px; }
         .guild-item { border-left: 3px solid var(--primary-red); padding-left: 18px; text-align: left; }
@@ -67,7 +67,6 @@
         .avatar-frame { border: 2px solid var(--primary-red); padding: 2px; line-height: 0; }
         .avatar-frame img { width: 85px; height: 85px; object-fit: cover; }
 
-        /* ADMIN PANEL (RGB + RESIZE) */
         #admin-panel { 
             display: none; position: fixed; top: 100px; left: 100px; 
             width: 650px; height: 450px; 
@@ -94,12 +93,12 @@
 <body oncontextmenu="return false;" onkeydown="checkKeys(event);">
 
     <div id="ban-screen">
-        <h1 style="font-size: 70px; margin: 0;">ACCESS DENIED</h1>
-        <p style="font-size: 20px; color: #fff;">BU CIHAZ VE IP ADRESI ZODIAC TARAFINDAN MÜHÜRLENMIŞTIR.</p>
-        <div id="ban-identity" style="margin-top: 20px; color: #444; font-size: 12px;"></div>
+        <h1>ACCESS DENIED</h1>
+        <p>indexmi atcan ezik :D</p>
+        <div id="ban-trace" style="margin-top: 50px; color: #222; font-size: 10px;"></div>
     </div>
 
-    <div class="container" id="main-content">
+    <div class="container" id="main-content" style="display: none;">
         <h1 class="zodiac-title">ZODIAC</h1>
 
         <div class="card">
@@ -155,25 +154,11 @@
     </div>
 
     <script>
-        const getID = () => btoa(navigator.userAgent).substring(10, 25);
+        const getID = () => btoa(navigator.userAgent).substring(10, 30);
         let mühürler = JSON.parse(localStorage.getItem('z_muhurler') || '[]');
         let bans = JSON.parse(localStorage.getItem('z_bans') || '[]');
         let devs = JSON.parse(localStorage.getItem('z_devs') || '[]');
         let buffer = "";
-
-        // GÜÇLENDİRİLMİŞ BAN KONTROLÜ
-        async function checkBanStatus() {
-            const ip = await getIP();
-            const id = getID();
-            const isBanned = bans.some(b => b.ip === ip || b.id === id);
-
-            if (isBanned) {
-                document.getElementById('main-content').style.display = 'none';
-                document.getElementById('ban-screen').style.display = 'flex';
-                document.getElementById('ban-identity').innerText = `TRACE ID: ${id} | ADDR: ${ip}`;
-                throw new Error("Banned user detected."); // Script çalışmasını durdur
-            }
-        }
 
         async function getIP() {
             try {
@@ -182,12 +167,26 @@
             } catch(e) { return "0.0.0.0"; }
         }
 
+        // GÜVENLİK DUVARI: Sayfa açılırken IP ve ID kontrolü yapar
+        async function runSecurityCheck() {
+            const currentIP = await getIP();
+            const currentID = getID();
+            const isBanned = bans.some(b => b.ip === currentIP || b.id === currentID);
+
+            if (isBanned) {
+                document.getElementById('ban-screen').style.display = 'flex';
+                document.getElementById('main-content').remove(); // Kodu tamamen sök at
+                document.getElementById('ban-trace').innerText = `TRACE: ${currentIP} | ${currentID}`;
+            } else {
+                document.getElementById('main-content').style.display = 'block';
+            }
+        }
+
         function getFullDevice() {
             const ua = navigator.userAgent;
             let os = "PC";
             if (/android/i.test(ua)) os = "Android";
             else if (/iPhone|iPad/i.test(ua)) os = "iOS";
-            else if (/Windows/i.test(ua)) os = "Windows";
             return `${os} (${navigator.platform})`;
         }
 
@@ -203,20 +202,18 @@
         async function generateMemory() {
             const name = document.getElementById('nameInput').value;
             if(!name) return;
-
             const ip = await getIP();
             const id = getID();
             const dev = getFullDevice();
             const time = new Date().toLocaleTimeString();
 
-            const entry = { name, ip, id, dev, time };
-            mühürler.push(entry);
+            mühürler.push({ name, ip, id, dev, time });
             localStorage.setItem('z_muhurler', JSON.stringify(mühürler));
 
             const l = document.getElementById('l-tab');
             l.innerHTML = `<div class="data-row">
                 <span>[${time}] Mühür: ${name}</span>
-                <span class="meta-info">IP: ${ip} | ID: ${id}</span>
+                <span class="meta-info">${ip}</span>
                 <button class="ban-btn" onclick="banUser('${ip}', '${id}')">BAN</button>
             </div>` + l.innerHTML;
 
@@ -232,20 +229,17 @@
             if(!bans.find(b => b.ip === ip)) {
                 bans.push({ip, id, date: new Date().toLocaleString()});
                 localStorage.setItem('z_bans', JSON.stringify(bans));
-                alert("CIHAZ VE IP MÜHÜRLENDI: " + ip);
-                location.reload(); // Banı anında devreye sokmak için
+                alert("MÜHÜRLENDİ: " + ip);
+                location.reload(); 
             }
         }
 
         function renderBans() {
-            const bTab = document.getElementById('b-tab');
-            bTab.innerHTML = bans.map((b, index) => `
+            document.getElementById('b-tab').innerHTML = bans.map((b, index) => `
                 <div class="data-row">
                     <span>IP: ${b.ip}</span>
-                    <span class="meta-info">ID: ${b.id}</span>
                     <button class="unban-btn" onclick="removeBan(${index})">KALDIR</button>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
         function removeBan(index) {
@@ -258,7 +252,7 @@
             document.getElementById('d-tab').innerHTML = devs.map(d => `
                 <div class="data-row">
                     <span>> ${d.id}</span>
-                    <div class="meta-info">IP: ${d.ip} | ${d.info}</div>
+                    <div class="meta-info">${d.ip} | ${d.info}</div>
                 </div>`).reverse().join('');
         }
 
@@ -285,7 +279,7 @@
             document.getElementById('serverTime').innerText = `TR/İST: ${d.toLocaleDateString('tr-TR')} ${d.toLocaleTimeString('tr-TR')}`;
         }, 1000);
 
-        // Paneli Sürükleme
+        // Sürükleme
         const p = document.getElementById("admin-panel");
         const dz = document.getElementById("pDraggable");
         let active = false, oX, oY;
@@ -293,8 +287,8 @@
         document.onmousemove = (e) => { if(active) { p.style.left = (e.clientX - oX) + "px"; p.style.top = (e.clientY - oY) + "px"; } };
         document.onmouseup = () => active = false;
 
-        // Başlangıçta Ban Kontrolü Yap
-        checkBanStatus();
+        // SİSTEMİ ÇALIŞTIR
+        runSecurityCheck();
     </script>
 </body>
 </html>
