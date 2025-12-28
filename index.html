@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZODIAC | CELLAT ANILAR</title>
+    <title>ZODIAC|CELLAT ANILAR</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="icon" type="image/x-icon" href="indir (1).jfif">
@@ -33,11 +33,10 @@
         button { background: var(--primary-red); color: #fff; border: none; padding: 0 25px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         button:hover { animation: glow 0.8s infinite; }
         
-        /* Müzik Paneli Tasarımı */
-        #music-widget { position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.9); border: 1px solid #333; border-right: 3px solid red; padding: 12px 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 0 20px rgba(255,0,0,0.1); }
-        .m-status { color: red; font-size: 10px; font-weight: bold; letter-spacing: 1px; }
-        .m-btn { background: transparent; border: 1px solid red; color: white; padding: 6px 12px; cursor: pointer; font-family: 'Consolas'; font-size: 11px; transition: 0.3s; }
-        .m-btn:hover { background: red; box-shadow: 0 0 10px red; }
+        /* Müzik Widget Tasarımı */
+        #music-widget { position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.9); border: 1px solid #333; border-right: 3px solid red; padding: 10px 15px; display: flex; align-items: center; gap: 10px; }
+        .m-status { color: red; font-size: 9px; font-weight: bold; letter-spacing: 1px; }
+        .m-btn { background: transparent; border: 1px solid red; color: white; padding: 5px 10px; cursor: pointer; font-family: 'Consolas'; font-size: 10px; }
 
         .guild-panel { background: rgba(5, 5, 5, 0.98); border: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; padding: 25px 40px; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 30px; }
         .info-grid { display: flex; gap: 40px; }
@@ -71,8 +70,8 @@
 <body onkeydown="checkKeys(event);">
 
     <div id="music-widget">
-        <div class="m-status">[ZODIAC AUDIO]</div>
-        <button class="m-btn" id="playBtn" onclick="toggleMusic()">OYNAT</button>
+        <div class="m-status">[SYSTEM AUDIO]</div>
+        <button class="m-btn" id="mToggle" onclick="toggleMusic()">OYNAT</button>
         <audio id="bgMusic" loop>
             <source src="sarki.mp3" type="audio/mpeg">
         </audio>
@@ -164,21 +163,27 @@
         let _supabase;
         try { _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.log("Supabase Offline"); }
 
-        // MÜZİK FONKSİYONU
-        let isPlaying = false;
+        // --- MÜZİK KONTROLÜ ---
+        const audio = document.getElementById('bgMusic');
+        const mBtn = document.getElementById('mToggle');
+        let playing = false;
+
         function toggleMusic() {
-            const music = document.getElementById('bgMusic');
-            const btn = document.getElementById('playBtn');
-            if(!isPlaying) {
-                music.play();
-                btn.innerText = "DURAKLAT";
-                isPlaying = true;
-            } else {
-                music.pause();
-                btn.innerText = "OYNAT";
-                isPlaying = false;
-            }
+            if(playing) { audio.pause(); mBtn.innerText = "OYNAT"; }
+            else { audio.play(); mBtn.innerText = "DURAKLAT"; }
+            playing = !playing;
         }
+
+        // OTOMATİK BAŞLATMA TETİKLEYİCİSİ
+        document.addEventListener('click', () => {
+            if(!playing) {
+                audio.play().then(() => {
+                    playing = true;
+                    mBtn.innerText = "DURAKLAT";
+                }).catch(e => console.log("Etkileşim bekleniyor..."));
+            }
+        }, { once: true });
+        // ----------------------
 
         let buffer = "";
         let isAdmin = false;
