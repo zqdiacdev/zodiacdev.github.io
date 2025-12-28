@@ -3,73 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZODIAC | 2026 MONITOR</title>
+    <title>ZODIAC | 2026</title>
     
     <link rel="icon" type="image/x-icon" href="indir (1).jfif">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --primary-red: #ff0000; }
-        body { 
-            margin: 0; padding: 0; 
-            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3dmN3Jka2l2bnZmajIwcm1qdTlpeW52ODF2aWRqZWkzNGl3d3IweSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/w0YROIlXXXl5k0yyvW/giphy.gif'); 
-            background-size: cover; background-position: center; background-attachment: fixed; 
-            color: #eee; font-family: 'Consolas', monospace; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; overflow-x: hidden; 
-        }
+        body { margin: 0; padding: 0; background: linear-gradient(rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.78)), url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3dmN3Jka2l2bnZmajIwcm1qdTlpeW52ODF2aWRqZWkzNGl3d3IweSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/w0YROIlXXXl5k0yyvW/giphy.gif'); background-size: cover; background-position: center; background-attachment: fixed; color: #eee; font-family: 'Consolas', monospace; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
         
-        .container { width: 95%; max-width: 900px; text-align: center; padding: 50px 0; z-index: 1; }
-        .zodiac-title { font-size: 80px; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 25px; margin-bottom: 40px; }
-
-        /* GÖRSELDEKİ SİYAH YATAY ÜST PANEL */
-        .guild-header { 
-            background: rgba(5, 5, 5, 0.98); border: 1px solid #111; 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 20px 40px; border-radius: 4px; margin-bottom: 25px;
+        .container { width: 95%; max-width: 900px; text-align: center; padding: 60px 0; z-index: 1; }
+        .zodiac-title { font-size: clamp(50px, 12vw, 100px); font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 20px; margin-bottom: 50px; display: inline-block; }
+        
+        /* GÖRSELDEKİ SİYAH YATAY PANEL */
+        .guild-panel { 
+            background: rgba(5, 5, 5, 0.98); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 25px 40px; 
+            border-radius: 4px; 
+            margin-top: 20px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .info-grid { display: flex; gap: 40px; align-items: center; }
+        
+        .info-grid { display: flex; gap: 40px; }
         .guild-item { border-left: 3px solid var(--primary-red); padding-left: 18px; text-align: left; }
-        .tag { display: block; color: var(--primary-red); font-size: 10px; text-transform: uppercase; font-weight: bold; margin-bottom: 3px; }
-        .val { font-size: 20px; font-weight: bold; color: #fff; }
+        .tag { display: block; color: var(--primary-red); font-size: 11px; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
+        .val { font-size: 18px; font-weight: bold; color: #fff; }
         
         .social-links { display: flex; gap: 20px; align-items: center; }
-        .social-links a { color: white; font-size: 26px; transition: 0.3s; text-decoration: none; }
-        .social-links a:hover { color: var(--primary-red); filter: drop-shadow(0 0 8px red); }
-
+        .social-links a { color: white; font-size: 30px; transition: 0.3s; text-decoration: none; }
+        .social-links a:hover { color: var(--primary-red); transform: translateY(-5px); filter: drop-shadow(0 0 10px red); }
+        
         .avatar-frame { border: 2px solid var(--primary-red); padding: 2px; line-height: 0; }
         .avatar-frame img { width: 85px; height: 85px; object-fit: cover; }
 
         /* INPUT KARTI */
-        .card { background: rgba(5, 5, 5, 0.9); border: 1px solid #222; border-left: 4px solid var(--primary-red); padding: 25px; margin-bottom: 25px; text-align: left; }
+        .card { background: rgba(5, 5, 5, 0.9); border: 1px solid rgba(255, 0, 0, 0.2); border-left: 4px solid var(--primary-red); padding: 25px; margin-bottom: 30px; text-align: left; }
         .input-group { display: flex; gap: 15px; margin-top: 15px; }
-        input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 12px; outline: none; font-family: 'Consolas'; }
-        button { background: var(--primary-red); color: #fff; border: none; padding: 0 25px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #cc0000; }
+        input { flex: 1; background: rgba(0, 0, 0, 0.8); border: 1px solid #333; color: #fff; padding: 12px; outline: none; }
+        button { background: var(--primary-red); color: #fff; border: none; padding: 0 25px; font-weight: bold; cursor: pointer; }
 
-        /* SQL ADMIN PANEL (SÜRÜKLENEBİLİR) */
-        #admin-panel { display: none; position: fixed; top: 50px; left: 50px; width: 550px; height: 400px; background: #000; border: 2px solid red; z-index: 9999; box-shadow: 0 0 50px #000; flex-direction: column; }
+        /* ADMIN PANEL */
+        #admin-panel { display: none; position: fixed; top: 100px; left: 100px; width: 550px; height: 450px; background: #000; border: 2px solid red; z-index: 9999; box-shadow: 0 0 40px #000; flex-direction: column; }
         .p-header { background: red; color: white; padding: 10px; cursor: move; font-size: 11px; font-weight: bold; display: flex; justify-content: space-between; }
         .p-tabs { display: flex; background: #111; }
         .t-btn { flex: 1; padding: 12px; border: none; background: transparent; color: #555; font-size: 10px; cursor: pointer; font-weight: bold; }
         .t-btn.active { color: white; background: #080808; border-bottom: 2px solid red; }
         .t-content { flex: 1; overflow-y: auto; padding: 15px; color: #0f0; font-size: 11px; background: #050505; }
         
-        /* SQL VERİ SATIRI */
-        .data-row { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #111; align-items: center; }
-        .meta-info { display: flex; gap: 15px; }
-        .ip-badge { color: red; font-weight: bold; }
-        .dev-badge { color: #888; }
+        /* SQL VERİ DİZİLİMİ (YAN YANA) */
+        .data-row { display: flex; justify-content: space-between; border-bottom: 1px solid #111; padding: 10px 5px; align-items: center; }
+        .meta-group { display: flex; gap: 20px; color: #888; }
+        .badge { color: red; font-weight: bold; }
 
-        footer { margin-top: 40px; color: #444; font-size: 12px; letter-spacing: 1px; }
         #auth-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 10000; justify-content: center; align-items: center; }
+        footer { margin-top: 50px; color: #444; font-size: 12px; }
     </style>
 </head>
-<body oncontextmenu="return false;" onkeydown="checkKeys(event);">
+<body oncontextmenu="handleBan(); return false;" onkeydown="checkKeys(event);">
 
     <div class="container">
         <h1 class="zodiac-title">ZODIAC</h1>
 
-        <div class="guild-header">
+        <div class="card">
+            <div style="color: var(--primary-red); font-size: 11px; font-weight: bold;">[SQL TERMINAL] - ADINI MÜHÜRLE</div>
+            <div class="input-group">
+                <input type="text" id="nameInput" placeholder="Kullanıcı adını mühürle...">
+                <button onclick="generateMemory()">KAYDET</button>
+            </div>
+        </div>
+
+        <div id="memory-display" style="display:none; margin-bottom: 30px;"><canvas id="memoryCanvas" style="width:100%; border: 2px solid var(--primary-red);"></canvas></div>
+
+        <div class="guild-panel">
             <div class="info-grid">
                 <div class="guild-item"><span class="tag">Owner</span><span class="val">Zodiac</span></div>
                 <div class="guild-item"><span class="tag">Founder</span><span class="val">Cellat</span></div>
@@ -83,33 +92,22 @@
             </div>
         </div>
 
-        <div class="card">
-            <div style="color: var(--primary-red); font-size: 11px; font-weight: bold;">[SQL TERMINAL] - VERİ TABANINA MÜHÜRLE</div>
-            <div class="input-group">
-                <input type="text" id="nameInput" placeholder="Kullanıcı adını girin...">
-                <button onclick="saveData()">KAYDET</button>
-            </div>
-        </div>
-
-        <div id="memory-display" style="display:none; margin-bottom: 30px;">
-            <canvas id="memoryCanvas" style="width:100%; border: 2px solid var(--primary-red);"></canvas>
-        </div>
-
         <footer>
-            <div id="serverTime" style="color: red; font-weight: bold; margin-bottom: 10px; font-size: 16px;">Yükleniyor...</div>
+            <div id="serverTime" style="color: red; font-weight: bold; margin-bottom: 5px;">Yükleniyor...</div>
             <div>© 2026 ZODIAC. Tüm hakları saklıdır.</div>
-            <div style="font-size:10px; margin-top:5px; color:#222;">ZODIAC WEB MONITOR v9.0 // CELLAT STABLE</div>
+            <div style="font-size:9px; margin-top:5px; color:#222;">ZODIAC v10.0-MONITOR</div>
         </footer>
     </div>
 
     <div id="admin-panel">
-        <div class="p-header" id="pDraggable"><span>ZODIAC SQL MONITOR</span><span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;">[X]</span></div>
+        <div class="p-header" id="pDraggable"><span>ZODIAC COMMAND</span><span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;">[X]</span></div>
         <div class="p-tabs">
             <button class="t-btn active" onclick="tab(event, 'l-tab')">MÜHÜRLER</button>
-            <button class="t-btn" onclick="tab(event, 'b-tab')">BANLAR</button>
+            <button class="t-btn" onclick="tab(event, 'd-tab')">CİHAZLAR & IP</button>
         </div>
         <div id="l-tab" class="t-content" style="display:block;"></div>
-        <div id="b-tab" class="t-content" style="display:none;"></div>
+        <div id="d-tab" class="t-content" style="display:none;"></div>
+        <div style="padding:10px; background:#111;"><button onclick="localStorage.clear(); location.reload();" style="width:100%; background:#222; color:red; border:none; padding:8px; font-size:9px; cursor:pointer;">SYSTEM RESET</button></div>
     </div>
 
     <div id="auth-overlay">
@@ -121,13 +119,16 @@
     </div>
 
     <script>
-        let logs = JSON.parse(localStorage.getItem('z_logs') || '[]');
+        const getID = () => btoa(navigator.userAgent).substring(10, 25);
+        let bans = JSON.parse(localStorage.getItem('z_bans') || '[]');
+        let devs = JSON.parse(localStorage.getItem('z_devs') || '[]');
         let buffer = "";
 
         function getDeviceInfo() {
             const ua = navigator.userAgent;
-            if (/android/i.test(ua)) return "ANDROID";
-            if (/iPhone|iPad|iPod/i.test(ua)) return "IOS";
+            if (/android/i.test(ua)) return "Android";
+            if (/iPhone|iPad/i.test(ua)) return "iOS";
+            if (/Windows/i.test(ua)) return "Windows";
             return "PC";
         }
 
@@ -138,45 +139,33 @@
             } catch(e) { return "0.0.0.0"; }
         }
 
-        async function saveData() {
-            const name = document.getElementById('nameInput').value;
-            if(!name) return;
-            
-            const ip = await getIP();
-            const dev = getDeviceInfo();
-            logs.push({name: name, ip: ip, dev: dev, date: new Date().toLocaleString()});
-            localStorage.setItem('z_logs', JSON.stringify(logs));
-
-            const c = document.getElementById('memoryCanvas'); 
-            const ctx = c.getContext('2d');
-            c.width = 800; c.height = 150;
-            ctx.fillStyle="#000"; ctx.fillRect(0,0,800,150);
-            ctx.fillStyle="#fff"; ctx.font="bold 35px Courier New"; ctx.textAlign="center"; 
-            ctx.fillText(name.toUpperCase(), 400, 85);
-            
-            document.getElementById('memory-display').style.display="block";
-            document.getElementById('nameInput').value = "";
-            renderLogs();
-        }
-
-        function renderLogs() {
-            const box = document.getElementById('l-tab');
-            box.innerHTML = logs.map(l => `
-                <div class="data-row">
-                    <span>> ${l.name}</span>
-                    <div class="meta-info">
-                        <span class="ip-badge">${l.ip}</span>
-                        <span class="dev-badge">${l.dev}</span>
-                    </div>
-                </div>
-            `).reverse().join('');
-        }
-
         function tab(evt, id) {
-            document.querySelectorAll('.t-content').forEach(c => c.style.display = "none");
+            document.querySelectorAll('.t-content').forEach(c => c.style.display = 'none');
             document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).style.display = "block";
+            document.getElementById(id).style.display = 'block';
             evt.currentTarget.classList.add('active');
+            if(id === 'd-tab') renderDevs();
+        }
+
+        function renderDevs() {
+            document.getElementById('d-tab').innerHTML = devs.map(d => `
+                <div class="data-row">
+                    <span>> ${d.id}</span>
+                    <div class="meta-group">
+                        <span class="badge">${d.ip}</span>
+                        <span>${d.info}</span>
+                    </div>
+                </div>`).reverse().join('');
+        }
+
+        async function logDev() {
+            const ip = await getIP();
+            const id = getID();
+            const info = getDeviceInfo();
+            if(!devs.find(x => x.id === id && x.ip === ip)) {
+                devs.push({id:id, ip:ip, info:info, date:new Date().toLocaleString()});
+                localStorage.setItem('z_devs', JSON.stringify(devs));
+            }
         }
 
         function checkKeys(e) {
@@ -186,10 +175,23 @@
 
         function verify() {
             if(document.getElementById('mPass').value === "1515") {
+                localStorage.setItem('is_admin', 'true');
                 document.getElementById('auth-overlay').style.display='none';
                 document.getElementById('admin-panel').style.display='flex';
-                renderLogs();
+                logDev();
             }
+        }
+
+        function generateMemory() {
+            const n = document.getElementById('nameInput').value; if(!n) return;
+            const c = document.getElementById('memoryCanvas'); const ctx = c.getContext('2d');
+            c.width = 800; c.height = 200;
+            ctx.fillStyle="#000"; ctx.fillRect(0,0,800,200);
+            ctx.fillStyle="#fff"; ctx.font="bold 30px Courier New"; ctx.textAlign="center"; ctx.fillText(n.toUpperCase(), 400, 100);
+            document.getElementById('memory-display').style.display="block";
+            
+            const l = document.getElementById('l-tab');
+            l.innerHTML = `<div class="data-row"><span>[${new Date().toLocaleTimeString()}] Mühür: ${n}</span></div>` + l.innerHTML;
         }
 
         setInterval(() => {
@@ -197,26 +199,14 @@
             document.getElementById('serverTime').innerText = `TR/İST: ${d.toLocaleDateString('tr-TR')} ${d.toLocaleTimeString('tr-TR')}`;
         }, 1000);
 
-        // PANEL SÜRÜKLEME
+        // SÜRÜKLEME FONKSİYONU
         const p = document.getElementById("admin-panel");
-        const h = document.getElementById("pDraggable");
-        let active = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
-
-        h.onmousedown = (e) => {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
-            if (e.target === h) active = true;
-        };
-        document.onmousemove = (e) => {
-            if (active) {
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-                xOffset = currentX;
-                yOffset = currentY;
-                p.style.transform = `translate(${currentX}px, ${currentY}px)`;
-            }
-        };
+        const dz = document.getElementById("pDraggable");
+        let active = false, oX, oY;
+        dz.onmousedown = (e) => { active = true; oX = e.clientX - p.offsetLeft; oY = e.clientY - p.offsetTop; };
+        document.onmousemove = (e) => { if(active) { p.style.left = (e.clientX - oX) + "px"; p.style.top = (e.clientY - oY) + "px"; } };
         document.onmouseup = () => active = false;
+
     </script>
 </body>
 </html>
