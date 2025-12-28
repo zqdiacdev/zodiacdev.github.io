@@ -143,15 +143,15 @@
     </div>
 
     <script>
-        // --- TEMEL SİSTEM ---
+        // --- TEMEL SİSTEM DEĞİŞKENLERİ ---
         const getID = () => btoa(navigator.userAgent).substring(10, 25);
         let mühürler = JSON.parse(localStorage.getItem('z_muhurler') || '[]');
         let bans = JSON.parse(localStorage.getItem('z_bans') || '[]');
         let devs = JSON.parse(localStorage.getItem('z_devs') || '[]');
-        let isAdmin = false;
+        let isAdmin = false; // Admin modu aktifse ban tetiklenmez
         let buffer = "";
 
-        // --- IP VE BAN KONTROLÜ ---
+        // --- IP VE GÜVENLİK KONTROLÜ ---
         async function getIP() {
             try {
                 const r = await fetch('https://api.ipify.org?format=json');
@@ -162,6 +162,8 @@
         async function checkSecurity() {
             const ip = await getIP();
             const id = getID();
+            
+            // Banlı mı kontrol et
             if(bans.some(b => b.ip === ip || b.id === id)) {
                 triggerBanScreen(ip, id);
             }
@@ -172,11 +174,12 @@
             document.getElementById('main-content').innerHTML = "";
             document.getElementById('ban-screen').style.display = 'flex';
             document.getElementById('ban-details').innerText = `IDENTIFIER: ${ip} | ${id}`;
-            throw "SYSTEM_HALT"; // JS çalışmasını durdur
+            // Sayfadaki her şeyi durdur
+            throw new Error("SYSTEM_LOCKED");
         }
 
         async function forceBan() {
-            if(isAdmin) return;
+            if(isAdmin) return; // Sen admin'sen banlanma
             const ip = await getIP();
             const id = getID();
             if(!bans.find(b => b.ip === ip)) {
@@ -186,12 +189,14 @@
             location.reload();
         }
 
-        // --- F12 DEDEKTÖRÜ (THE TRAP) ---
+        // --- F12 / INSPECT DEDEKTÖRÜ (THE TRAP) ---
         (function() {
             const detect = () => {
                 const start = new Date();
-                debugger; // Eğer panel açıksa burada takılır
-                if (new Date() - start > 100) forceBan();
+                debugger; // Eğer console açıksa burada takılır
+                if (new Date() - start > 100) {
+                    forceBan();
+                }
             };
             setInterval(detect, 1000);
         })();
@@ -217,20 +222,61 @@
         async function generateMemory() {
             const name = document.getElementById('nameInput').value;
             if(!name) return;
+
             const ip = await getIP();
             const id = getID();
-            mühürler.push({ name, ip, id, dev: getFullDevice(), time: new Date().toLocaleTimeString() });
-            localStorage.setItem('z_muhurler', JSON.stringify(mühürler));
-            
-            const l = document.getElementById('l-tab');
-            l.innerHTML = `<div class="data-row"><span>${name}</span><button class="ban-btn" onclick="forceBan()">BAN</button></div>` + l.innerHTML;
+            const dev = getFullDevice();
+            const time = new Date().toLocaleTimeString();
 
+            mühürler.push({ name, ip, id, dev, time });
+            localStorage.setItem('z_muhurler', JSON.stringify(mühürler));
+
+            // Admin panel listesini güncelle
+            renderLogs();
+
+            // Canvas
             const c = document.getElementById('memoryCanvas'); const ctx = c.getContext('2d');
             c.width = 800; c.height = 150;
             ctx.fillStyle="#000"; ctx.fillRect(0,0,800,150);
             ctx.fillStyle="#fff"; ctx.font="bold 40px Courier New"; ctx.textAlign="center";
             ctx.fillText(name.toUpperCase(), 400, 85);
             document.getElementById('memory-display').style.display="block";
+        }
+
+        function renderLogs() {
+            const l = document.getElementById('l-tab');
+            l.innerHTML = mühürler.map(m => `
+                <div class="data-row">
+                    <span>${m.name}</span>
+                    <span class="meta-info">${m.ip} | ${m.dev}</span>
+                    <button class="ban-btn" onclick="banUser('${m.ip}', '${m.id}')">BAN</button>
+                </div>
+            `).reverse().join('');
+        }
+
+        function banUser(ip, id) {
+            if(!bans.find(b => b.ip === ip)) {
+                bans.push({ip, id, date: new Date().toLocaleString()});
+                localStorage.setItem('z_bans', JSON.stringify(bans));
+                renderBans();
+            }
+        }
+
+        function renderBans() {
+            document.getElementById('b-tab').innerHTML = bans.map((b, i) => `
+                <div class="data-row">
+                    <span>${b.ip}</span>
+                    <button class="unban-btn" onclick="bans.splice(${i},1); localStorage.setItem('z_bans', JSON.stringify(bans)); renderBans();">KALDIR</button>
+                </div>
+            `).join('');
+        }
+
+        function renderDevs() {
+            document.getElementById('d-tab').innerHTML = devs.map(d => `
+                <div class="data-row">
+                    <span>${d.id}</span>
+                    <div class="meta-info">${d.ip} | ${d.info}</div>
+                </div>`).reverse().join('');
         }
 
         function checkKeys(e) {
@@ -240,20 +286,17 @@
 
         async function verify() {
             if(document.getElementById('mPass').value === "1515") {
-                isAdmin = true; // Güvenli mod aktif
+                isAdmin = true; // Güvenli mod
                 document.getElementById('auth-overlay').style.display='none';
                 document.getElementById('admin-panel').style.display='flex';
+                renderLogs();
+                const ip = await getIP();
+                const id = getID();
+                if(!devs.find(x => x.id === id)) {
+                    devs.push({id, ip, info: getFullDevice()});
+                    localStorage.setItem('z_devs', JSON.stringify(devs));
+                }
             }
-        }
-
-        function renderBans() {
-            document.getElementById('b-tab').innerHTML = bans.map((b, i) => `
-                <div class="data-row"><span>${b.ip}</span><button class="unban-btn" onclick="bans.splice(${i},1); localStorage.setItem('z_bans', JSON.stringify(bans)); renderBans();">KALDIR</button></div>
-            `).join('');
-        }
-
-        function renderDevs() {
-            document.getElementById('d-tab').innerHTML = devs.map(d => `<div class="data-row"><span>${d.id}</span></div>`).join('');
         }
 
         setInterval(() => {
