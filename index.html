@@ -107,7 +107,7 @@
     <div id="admin-panel">
         <div class="p-header" id="pDraggable"><span><i class="fas fa-shield-alt"></i> ZODIAC COMMAND CENTER</span><span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer;">[X]</span></div>
         <div class="p-tabs">
-            <button class="t-btn active" onclick="tab(event, 'l-tab')">MÜHÜRLER</button>
+            <button class="t-btn active" onclick="tab(event, 'l-tab')">MÜHÜRLER (DETAYLI)</button>
             <button class="t-btn" onclick="tab(event, 'v-tab')">ZİYARETÇİLER (LOGS)</button>
             <button class="t-btn" onclick="tab(event, 'b-tab')">BAN LİSTESİ</button>
         </div>
@@ -144,7 +144,6 @@
     </div>
 
     <script>
-        // CANLI SQL BAĞLANTISI
         const SUPABASE_URL = 'https://drgrjsbfnjlrcezlbpkv.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyZ3Jqc2JmbmpscmNlemxicGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MjQzNjcsImV4cCI6MjA4MjUwMDM2N30.DvA0k3Rund7l5oeqrrG-OuYYnDg75MemDGjKlyO_0Zo';
         
@@ -219,8 +218,7 @@
             ctx.fillStyle="red"; ctx.font="12px Courier New"; ctx.fillText(getNow(), 20, 30);
             ctx.fillStyle="#fff"; ctx.font="bold 45px Courier New"; ctx.textAlign="center";
             ctx.fillText(name.toUpperCase(), 400, 100);
-            ctx.font="10px Courier New"; ctx.fillStyle="#444";
-            ctx.fillText("SIGIL ID: " + id, 400, 150);
+            // SIGIL ID çizimi kaldırıldı
             
             document.getElementById('memory-display').style.display="block";
             nameInput.value = "";
@@ -270,7 +268,6 @@
             renderBans();
         }
 
-        // DATABASE RESET FONKSİYONU
         async function systemReset() {
             if(confirm("TÜM VERİLER SİLİNECEK! Emin misin?")) {
                 const pass = prompt("Güvenlik Onayı: 'ZODIAC-DELETE' yazın.");
